@@ -3,12 +3,13 @@ class FlashcardSetsController < ApplicationController
   
     def index
       @flashcard_sets = FlashcardSet.all
-      render json: @flashcard_sets
+      render json: @flashcard_sets, status: :ok
     end
   
 
     def show
-      render json: @flashcard_set
+
+      render json: @flashcard_set, include: ['comments'], status: :ok
     end
   
 
@@ -41,6 +42,7 @@ class FlashcardSetsController < ApplicationController
   
     def set_flashcard_set
       @flashcard_set = FlashcardSet.find(params[:id])
+      render json: { error: 'Flashcard set not found' }, status: :not_found unless @flashcard_set
     end
   
     def flashcard_set_params
