@@ -7,8 +7,6 @@ RSpec.describe "FlashcardSets API", type: :request do
   let(:flashcard_set_id) { flashcard_set.id }
   let(:valid_attributes) { { name: 'Updated Name' }.to_json }
 
-
-
   # Test index action
   describe 'GET /sets' do
     before { get '/sets' }  # Perform the GET request
@@ -88,4 +86,41 @@ RSpec.describe "FlashcardSets API", type: :request do
       end
     end
   end
+
+  #Test Post #comment
+  describe 'POST /sets/:id/comment' do
+    context 'when flashcard set exists' do
+      let(:valid_attributes) { { comment: 'This is a great set!' } }
+  
+      before do
+        sign_in user
+      end
+  
+      it 'creates a comment on the flashcard set' do
+        post "/sets/#{flashcard_set.id}/comment", 
+             params: { comment: { comment: 'This is a great set!'} }.to_json, 
+             headers: { 'Content-Type' => 'application/json' }
+  
+        expect(response).to have_http_status(:created)
+      end
+    end
+  
+    context 'when flashcard set does not exist' do
+      let(:invalid_set_id) { 9999 }
+  
+      before do
+        sign_in user
+      end
+  
+      it 'returns a 404 error' do
+        post "/sets/#{invalid_set_id}/comment", 
+             params: { comment: {comment: 'This set does not exist!'} }.to_json, 
+             headers: { 'Content-Type' => 'application/json' }
+  
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+  
+  
 end
