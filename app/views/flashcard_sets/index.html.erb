@@ -1,0 +1,6 @@
+<h1>Flashcard Sets</h1>
+<% @flashcard_sets.each do |flashcard_set| %>
+  <div>
+    <h2><%= link_to flashcard_set.name, flashcard_set_path(flashcard_set) %></h2>
+  </div>
+<% end %>

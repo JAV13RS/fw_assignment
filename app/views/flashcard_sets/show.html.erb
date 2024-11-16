@@ -1,0 +1,18 @@
+<h1><%= @flashcard_set.name %></h1>
+
+
+
+<h2>Flashcards:</h2>
+<% @flashcard_set.flashcards.each do |flashcard| %>
+  <div class="flashcard">
+    <p><strong>Question:</strong> <%= flashcard.question %></p>
+    <p><strong>Answer:</strong> <%= flashcard.answer %></p>
+  </div>
+<% end %>
+
+<h2>Comments:</h2>
+<% @flashcard_set.comments.each do |comment| %>
+  <p><%= comment.comment %> - <%= comment.user.email %></p>
+<% end %>
+
+<%= link_to 'Back to sets', flashcard_sets_path %>

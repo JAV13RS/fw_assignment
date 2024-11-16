@@ -1,0 +1,25 @@
+<h1>FlashcardSets#new</h1>
+
+<%= form_with(model: @flashcard_set, local: true) do |form| %>
+  <% if @flashcard_set.errors.any? %>
+    <div>
+      <h2><%= pluralize(@flashcard_set.errors.count, "error") %> stopped this flashcard_set from being saved:</h2>
+      <ul>
+        <% @flashcard_set.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', flashcard_sets_path %>

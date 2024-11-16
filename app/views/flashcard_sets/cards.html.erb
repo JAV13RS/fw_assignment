@@ -1,0 +1,10 @@
+<h1>Cards for <%= @flashcard_set.name %></h1>
+
+<% @flashcard_set.flashcards.each do |flashcard| %>
+  <div>
+    <p><%= flashcard.question %></p>
+    <p><%= flashcard.answer %></p>
+  </div>
+<% end %>
+
+<%= link_to 'Back to set', flashcard_set_path(@flashcard_set) %>

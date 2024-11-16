@@ -1,9 +1,7 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+flashcard_set = FlashcardSet.create(name: "Physics Fundamentals")
+
+flashcard_set.flashcards.create([
+  { question: "What is the formula for force?", answer: "F = ma" },
+  { question: "What is the speed of light in a vacuum?", answer: "3.00 x 10^8 m/s" },
+  { question: "What is Newton's first law?", answer: "An object in motion stays in motion unless acted upon by an external force." }
+])
