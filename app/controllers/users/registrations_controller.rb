@@ -65,7 +65,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     respond_to do |format|
       if @user.save
         format.json { render json: @user, status: :created }
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
+        format.html { redirect_to user_url(@user), notice: 'User was successfully created.' }
       else
         format.json { render json: { error: @user.errors.full_messages }, status: :unprocessable_entity }
         format.html { render :new }

@@ -36,7 +36,6 @@ RSpec.describe "FlashcardSets API", type: :request do
     end
   end
   
-
   # Test show action
   describe 'GET /sets/:id' do
     before { get "/sets/#{flashcard_set_id}", headers: { 'Accept' => 'application/json' }  }
@@ -52,7 +51,6 @@ RSpec.describe "FlashcardSets API", type: :request do
       json_response = JSON.parse(response.body)
       expect(json_response['comments'].size).to be > 0
     end
-
   end
 
   # Test destroy action
@@ -128,6 +126,6 @@ RSpec.describe "FlashcardSets API", type: :request do
       end
     end
   end
-  
+
 end
 

@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, only: [:index, :create]
+  resources :users, only: [:index, :show, :update]
 
   root 'flashcard_sets#index'
 end

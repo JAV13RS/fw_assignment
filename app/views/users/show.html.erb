@@ -1,0 +1,14 @@
+<h1>User: <%= @user.email %></h1>
+
+<%= link_to 'Back to sets', flashcard_sets_path %>
+
+<% if @user.errors.any? %>
+  <div class="error_messages">
+    <h2>Errors:</h2>
+    <ul>
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
