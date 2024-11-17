@@ -2,142 +2,108 @@ require 'rails_helper'
 
 RSpec.describe "Collections API", type: :request do
   let(:user) { create(:user) }
-  let!(:collections) { create_list(:collection, 3, user: user) }
-  let(:flashcard_set) { create(:flashcard_set) }
+  let(:other_user) { create(:user) }
+  let!(:flashcard_set_1) { create(:flashcard_set, user: user, name: "Math Set 1") }
+  let!(:flashcard_set_2) { create(:flashcard_set, user: user, name: "Math Set 2") }
+  let!(:collection) { create(:collection, user: user, name: "Study Materials") }
+  let!(:comment) { create(:comment, user: user, flashcard_set: flashcard_set_1, comment: "Great for beginners!") }
 
-  def json
-    JSON.parse(response.body)
+  before do
+    collection.flashcard_sets << flashcard_set_1
+    collection.flashcard_sets << flashcard_set_2
   end
 
-  # Set the default headers for all requests
-  let(:headers) do
-    {
-      'Accept' => 'application/json',
-      'Content-Type' => 'application/json'
-    }
-  end
-  # tests for /users/:user_id/collections
-  describe "GET /users/:user_id/collections" do
-    it "returns all collections for the user" do
-      get "/users/#{user.id}/collections", headers: headers
+  describe "GET /collections" do
+    context "when format is JSON" do
+      it "returns all collections with flashcard sets and comments" do
+        get collections_path, as: :json
 
-      expect(response).to have_http_status(200)
-      expect(json.size).to eq(3)
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+
+        expect(json).to be_an(Array)
+        expect(json.first).to be_an(Array)
+
+        first_flashcard_set = json.first.first
+        expect(first_flashcard_set["comment"]).to eq("Great for beginners!")
+        expect(first_flashcard_set["set"]["name"]).to eq("Math Set 1")
+        expect(first_flashcard_set["user"]["email"]).to eq(user.email)
+      end
+    end
+
+    context "when format is HTML" do
+      it "renders the index template" do
+        get collections_path, as: :html
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Study Materials")
+        expect(response.body).to include("Math Set 1")
+      end
     end
   end
 
-  describe "POST /users/:user_id/collections" do
-    let(:valid_attributes) do
+  describe "POST /collections" do
+    let(:valid_params) do
       {
         collection: {
-          name: 'New Collection',
-          flashcard_set_ids: [flashcard_set.id]
+          name: "New Collection",
+          flashcard_sets: [
+            { setID: flashcard_set_1.id, comment: "Great for beginners!" },
+            { setID: flashcard_set_2.id, comment: "Very useful!" }
+          ]
         }
       }
     end
-
-    context "when user is authenticated" do
-      before { sign_in user }
-
-      it "creates a new collection" do
-        post "/users/#{user.id}/collections", params: valid_attributes.to_json, headers: headers
-      
-        expect(response).to have_http_status(201)
-        expect(json['name']).to eq('New Collection')
-        expect(json['flashcard_sets']).to be_an(Array)
-        expect(json['flashcard_sets']).to_not be_empty
-      end      
-    end
-
-    context "when user is not authenticated" do
-      it "fails and returns an Unauthorized error" do
-        post "/users/#{user.id}/collections", params: valid_attributes.to_json, headers: headers
-
-        expect(response).to have_http_status(401)
-      end
-    end
-  end
-
-  describe "GET /users/:user_id/collections/:id" do
-    let(:collection) { create(:collection, user: user) }
-
-    it "returns a single collection" do
-      get "/users/#{user.id}/collections/#{collection.id}", headers: headers
-
-      expect(response).to have_http_status(200)
-      expect(json['id']).to eq(collection.id)
-    end
-
-    it "returns 404 if collection is not found" do
-      get "/users/#{user.id}/collections/invalid_id", headers: headers
-
-      expect(response).to have_http_status(404)
-    end
-  end
-
-  describe "PUT /users/:user_id/collections/:id" do
-    let(:collection) { create(:collection, user: user) }
-    let(:valid_attributes) do
+  
+    let(:invalid_params) do
       {
         collection: {
-          name: 'Updated Name',
-          flashcard_set_ids: [flashcard_set.id]
+          name: "Invalid Collection",
+          flashcard_sets: [
+            { setID: -1, comment: "This set does not exist" }
+          ]
         }
       }
     end
-
-    context "when user is authenticated" do
+  
+    context "when the user is authenticated" do
       before { sign_in user }
-
-      it "updates the collection" do
-        put "/users/#{user.id}/collections/#{collection.id}", params: valid_attributes.to_json, headers: headers
-
-        expect(response).to have_http_status(200)
-        expect(json['name']).to eq('Updated Name')
+  
+      context "with valid parameters" do
+        it "creates a new collection and returns the data" do
+          expect do
+            post collections_path, params: valid_params, as: :json
+          end.to change(Collection, :count).by(1)
+  
+          expect(response).to have_http_status(:created)
+          json = JSON.parse(response.body)
+  
+          expect(json).to be_an(Array)
+          expect(json.size).to eq(2)
+  
+          expect(json.first["comment"]).to eq("Great for beginners!")
+          expect(json.first["set"]["name"]).to eq("Math Set 1")
+          expect(json.first["user"]["email"]).to eq(user.email)
+        end
       end
-
-      it "returns 404 if collection is not found" do
-        put "/users/#{user.id}/collections/invalid_id", params: valid_attributes.to_json, headers: headers
-
-        expect(response).to have_http_status(404)
-      end
-    end
-
-    context "when user is not authenticated" do
-      it "returns 401 Unauthorized" do
-        put "/users/#{user.id}/collections/#{collection.id}", params: valid_attributes.to_json, headers: headers
-
-        expect(response).to have_http_status(401)
-      end
-    end
-  end
-
-  describe "DELETE /users/:user_id/collections/:id" do
-    let(:collection) { create(:collection, user: user) }
-
-    context "when user is authenticated" do
-      before { sign_in user }
-
-      it "deletes the collection" do
-        delete "/users/#{user.id}/collections/#{collection.id}", headers: headers
-
-        expect(response).to have_http_status(204)
-        expect(Collection.exists?(collection.id)).to eq(false)
-      end
-
-      it "returns 404 if collection is not found" do
-        delete "/users/#{user.id}/collections/invalid_id", headers: headers
-
-        expect(response).to have_http_status(404)
+  
+      context "with invalid parameters" do
+        it "returns a 404 error if a flashcard set is not found" do
+          post collections_path, params: invalid_params, as: :json
+  
+          expect(response).to have_http_status(:unprocessable_entity)  
+          json = JSON.parse(response.body)
+          expect(json["error"]).to eq("Some flashcard sets not found")
+        end
       end
     end
-
-    context "when user is not authenticated" do
-      it "returns 401 Unauthorized" do
-        delete "/users/#{user.id}/collections/#{collection.id}", headers: headers
-
-        expect(response).to have_http_status(401)
+  
+    context "when the user is not authenticated" do
+      it "returns a 401 Unauthorized error" do
+        post collections_path, params: valid_params, as: :json
+  
+        expect(response).to have_http_status(:unauthorized)
       end
     end
-  end
+  end  
 end

@@ -1,75 +1,147 @@
 class CollectionsController < ApplicationController
-    before_action :authenticate_user!, only: [:create, :update, :destroy]
+  before_action :authenticate_user!, only: [:create, :update, :destroy]
+  before_action :validate_headers, only: [:create, :update, :destroy, :index, :show, :random], if: -> { request.format.json? }
 
-    def index
-      @collections = Collection.all
-      respond_to do |format|
-        format.html 
-        format.json { render json: @collections, status: :ok }
-        format.any { head :not_acceptable }
+  def index
+    @collections = Collection.includes(:flashcard_sets, :user).all
+  
+    respond_to do |format|
+      format.html 
+      format.json do
+        collections_data = @collections.map do |collection|
+          collection.flashcard_sets.map do |flashcard_set|
+            {
+              comment: flashcard_set.comments.first&.comment,
+              set: flashcard_set,
+              user: flashcard_set.user
+            }
+          end
+        end
+        render json: collections_data
       end
     end
+  end
+
+  def show
+    @collection = Collection.find(params[:id])
+    respond_to do |format|
+      format.html 
+      format.json { render json: @collection, status: :ok }
+    end
+  end
+
+  def new
+    @collection = Collection.new
+  end
+
+  def create
+    # Extract the flashcard set parameters from the request
+    flashcard_sets_params = collection_params[:flashcard_sets] || []
   
-    def show
-      @collection = Collection.find(params[:id])
+    # Fetch the actual FlashcardSet records from the database
+    flashcard_sets = FlashcardSet.where(id: flashcard_sets_params.map { |set| set[:setID] })
+  
+    # Validate that all flashcard sets provided exist
+    if flashcard_sets.count != flashcard_sets_params.size
       respond_to do |format|
-        format.html # renders app/views/collections/show.html.erb
+        format.json { render json: { error: "Some flashcard sets not found" }, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_entity }
+      end
+      return
+    end
+  
+    # Initialize the collection with the permitted parameters
+    collection = current_user.collections.new(collection_params.except(:flashcard_sets))
+  
+    # Assign the fetched FlashcardSet records to the collection
+    collection.flashcard_sets = flashcard_sets
+  
+    # Save the collection and handle response
+    if collection.save
+      # Instead of returning the collection object, return an array of flashcard sets
+      flashcard_sets_data = flashcard_sets.map do |flashcard_set|
+        {
+          comment: flashcard_set.comments.first&.comment,
+          set: flashcard_set,
+          user: flashcard_set.user
+        }
+      end
+  
+      respond_to do |format|
+        format.json { render json: flashcard_sets_data, status: :created }
+        format.html { redirect_to collection_path(collection), notice: 'Collection was successfully created.' }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: collection.errors, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_entity }
+      end
+    end
+  end
+  
+  
+  
+  
+  
+  def edit
+    @collection = Collection.find(params[:id])
+  end
+
+  def update
+    @collection = Collection.find(params[:id])
+    if @collection.update(collection_params)
+      respond_to do |format|
+        format.html { redirect_to collection_path(@collection), notice: 'Collection updated successfully.' }
         format.json { render json: @collection, status: :ok }
       end
-    end
-  
-    def new
-      @collection = Collection.new
-      # HTML form to create a new collection will be rendered
-    end
-  
-    def create
-      @collection = Collection.new(collection_params)
-      if @collection.save
-        respond_to do |format|
-          format.html { redirect_to collection_path(@collection), notice: 'Collection created successfully.' }
-          format.json { render json: @collection, status: :created, include: [:flashcard_sets] }
-        end
-      else
-        respond_to do |format|
-          format.html { render :new }
-          format.json { render json: @collection.errors, status: :unprocessable_entity }
-        end
-      end
-    end
-  
-    def edit
-      @collection = Collection.find(params[:id])
-    end
-  
-    def update
-      @collection = Collection.find(params[:id])
-      if @collection.update(collection_params)
-        respond_to do |format|
-          format.html { redirect_to collection_path(@collection), notice: 'Collection updated successfully.' }
-          format.json { render json: @collection, status: :ok }
-        end
-      else
-        respond_to do |format|
-          format.html { render :edit }
-          format.json { render json: @collection.errors, status: :unprocessable_entity }
-        end
-      end
-    end
-  
-    def destroy
-      @collection = Collection.find(params[:id])
-      @collection.destroy
+    else
       respond_to do |format|
-        format.html { redirect_to collections_path(), notice: 'Collection deleted successfully.' }
-        format.json { head :no_content }
+        format.html { render :edit }
+        format.json { render json: @collection.errors, status: :unprocessable_entity }
       end
     end
-  
-    private
-  
-    def collection_params
-        params.require(:collection).permit(:name, flashcard_set_ids: [])
+  end
+
+  def destroy
+    @collection = Collection.find(params[:id])
+    @collection.destroy
+    respond_to do |format|
+      format.html { redirect_to collections_path, notice: 'Collection deleted successfully.' }
+      format.json { head :no_content }
     end
-end
+  end
   
+  def random
+    collection = Collection.order("RANDOM()").first 
+    
+    if collection
+      respond_to do |format|
+        format.html { redirect_to collection_path(collection) } 
+        format.json { render json: { location: collection_path(collection) }, status: :ok } 
+      end
+    else
+      respond_to do |format|
+        format.html { render html: "<h1>No collections found</h1>".html_safe, status: :not_found } 
+        format.json { render json: { message: "No collections found", code: 404 }, status: :not_found } 
+      end
+    end
+  end
+
+  private
+
+  def validate_headers
+    unless request.headers["Accept"]&.include?("application/json")
+      render json: { error: "Invalid Accept header. Must be 'application/json'" }, status: :not_acceptable
+    end
+
+    unless request.headers["Content-Type"]&.include?("application/json")
+      render json: { error: "Invalid Content-Type header. Must be 'application/json'" }, status: :unsupported_media_type
+    end
+  end
+
+  def collection_params
+    # Permit the 'name' and 'flashcard_sets' key (which should be an array of hashes)
+    params.require(:collection).permit(:name, flashcard_sets: [:setID, :comment])
+  end
+  
+end

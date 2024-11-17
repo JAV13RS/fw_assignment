@@ -5,24 +5,26 @@ class FlashcardSetsController < ApplicationController
     @flashcard_sets = FlashcardSet.all
     respond_to do |format|
       format.json { render json: @flashcard_sets, status: :ok }
-      format.html { render :index }  # Adjust the view as needed
+      format.html { render :index }  
     end
   end
 
   def show
     respond_to do |format|
       format.json { render json: @flashcard_set, include: ['comments'], status: :ok }
-      format.html { render :show }  # Adjust the view as needed
+      format.html { render :show }  
     end
   end
 
   def create
     @flashcard_set = FlashcardSet.new(name: params[:name], user_id: current_user.id)
-
+  
     respond_to do |format|
-      if @flashcard_set.save
+      if flashcard_sets_today >= 20
+        format.json { render json: { message: "You have reached the maximum number of flashcard sets allowed today" }, status: :too_many_requests }
+        format.html { redirect_to flashcard_sets_path, alert: "You have reached the maximum number of flashcard sets allowed today." }
+      elsif @flashcard_set.save
         format.json { render json: @flashcard_set, status: :created }
-
         format.html { redirect_to @flashcard_set, notice: 'Flashcard set created successfully.' }
       else
         format.json { render json: @flashcard_set.errors, status: :unprocessable_entity }
@@ -88,5 +90,9 @@ class FlashcardSetsController < ApplicationController
 
   def comment_params
     params.require(:comment).permit(:comment)
+  end
+
+  def flashcard_sets_today
+    FlashcardSet.where("created_at >= ?", Time.zone.today.beginning_of_day).count
   end
 end

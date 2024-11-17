@@ -10,13 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_16_224627) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_17_171527) do
   create_table "collections", force: :cascade do |t|
     t.string "name"
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_collections_on_user_id"
+  end
+
+  create_table "collections_flashcard_sets", id: false, force: :cascade do |t|
+    t.integer "flashcard_set_id", null: false
+    t.integer "collection_id", null: false
+    t.index ["collection_id"], name: "index_collections_flashcard_sets_on_collection_id"
+    t.index ["flashcard_set_id"], name: "index_collections_flashcard_sets_on_flashcard_set_id"
   end
 
   create_table "comments", force: :cascade do |t|

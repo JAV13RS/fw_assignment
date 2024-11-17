@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "FlashcardSets API", type: :request do
-  let!(:flashcard_set) { create(:flashcard_set) } 
-  let!(:user) { create(:user) }
+  let(:user) { create(:user) }
+  let!(:flashcard_set) { create(:flashcard_set, user: user) }
   let!(:comment) { create(:comment, flashcard_set: flashcard_set,user: user, comment: 'hi this is a comment') }
   let(:flashcard_set_id) { flashcard_set.id }
   let(:valid_attributes) { { name: 'Updated Name' }.to_json }
@@ -18,6 +18,8 @@ RSpec.describe "FlashcardSets API", type: :request do
       expect(response.body).to include(flashcard_set.name)  
     end
   end
+
+  
 
   # Test create action
   describe 'POST /sets' do
@@ -37,7 +39,45 @@ RSpec.describe "FlashcardSets API", type: :request do
       }.to change(FlashcardSet, :count).by(1)
   
       expect(response).to have_http_status(201)
-      expect(response.content_type).to eq('application/json; charset=utf-8')  # Ensure the response is JSON
+      expect(response.content_type).to eq('application/json; charset=utf-8')  
+    end
+
+    context "when less than 20 flashcard sets are created today" do
+      it "creates a new flashcard set and returns 201" do
+        expect {
+          post "/sets", 
+               params: { flashcard_set: { name: "New Set", cards_attributes: [{ question: "What is 2+2?", answer: "4" }] } }.to_json,
+               headers: { 
+                 "Content-Type" => "application/json",    
+                 "Accept" => "application/json"           
+               }
+        }.to change(FlashcardSet, :count).by(1)
+        
+        expect(response).to have_http_status(:created)
+      end
+    end
+
+    context "when 20 flashcard sets are already created today" do
+      before do
+        20.times do
+          create(:flashcard_set)
+        end
+      end
+
+      it "returns 429 status for rate limit" do
+        post "/sets", 
+             params: { flashcard_set: { name: "New Set", cards_attributes: [{ question: "What is 2+2?", answer: "4" }] } }.to_json,
+             headers: { 
+               "Content-Type" => "application/json",    
+               "Accept" => "application/json"           
+             }
+      
+        expect(response).to have_http_status(:too_many_requests)
+      
+        expect(JSON.parse(response.body)["message"]).to eq("You have reached the maximum number of flashcard sets allowed today")
+      end
+      
+      
     end
   end
   

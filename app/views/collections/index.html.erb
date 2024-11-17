@@ -1,6 +1,11 @@
 <h1>Collections</h1>
 <ul>
   <% @collections.each do |collection| %>
-    <li><%= link_to collection.name, collection_path(collection) %></li>
+    <li><%= collection.name %></li>
+    <% collection.flashcard_sets.each do |set| %>
+      <ul>
+        <li><%= set.name %></li>
+      </ul>
+    <% end %>
   <% end %>
 </ul>
