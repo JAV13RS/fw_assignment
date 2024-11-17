@@ -17,8 +17,7 @@ class FlashcardSetsController < ApplicationController
   end
 
   def create
-    @flashcard_set = FlashcardSet.new(flashcard_set_params)
-    Rails.logger.info "Request format: #{request.format}"
+    @flashcard_set = FlashcardSet.new(name: params[:name], user_id: current_user.id)
 
     respond_to do |format|
       if @flashcard_set.save
@@ -72,7 +71,7 @@ class FlashcardSetsController < ApplicationController
 
     respond_to do |format|
       format.json { render json: flashcards, status: :ok }
-      format.html { render :cards }  # Adjust the view as needed
+      format.html { render :cards }  
     end
   end
 

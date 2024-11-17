@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-    before_action :authenticate_user!, only: [:index, :show]
+    before_action :authenticate_user!, only: [:index, :show,:create_collection, :show_collection, :update_collection, :destroy_collection]
     before_action :authorize_admin_status, only: [:update]
-    before_action :set_user, only: [:update, :destroy]
+    before_action :set_user, only: [:update, :destroy, :collections, :create_collection, :show_collection, :update_collection, :destroy_collection]
   
     def index
       @users = User.all
@@ -62,7 +62,97 @@ class UsersController < ApplicationController
         end
       end
     end
+    
+
+    def flashcard_sets
+        user = User.find_by(id: params[:user_id])
+        
+        respond_to do |format|
+            if user
+                format.json { render json: user.flashcard_sets, status: :ok }
+                format.html { render :flashcard_sets }
+            else
+                format.json { render json: { error: 'User not found' }, status: :not_found }
+                format.html { redirect_to users_path, alert: 'User not found' }
+            end
+        end
+    end
+
+    def collections
+        @collections = @user.collections.includes(:flashcard_sets)
+    
+        respond_to do |format|
+          format.html 
+          format.json { render json: @collections.map { |collection| 
+            {
+              set: collection.flashcard_sets.map { |set| 
+                {
+                  id: set.id,
+                  name: set.name,
+                  created_at: set.created_at,
+                  updated_at: set.updated_at
+                }
+              }
+            }
+          } }
+        end
+    end
+
+    def create_collection
+        @collection = @user.collections.new(collection_params)
+    
+        respond_to do |format|
+          if @collection.save
+            format.html { redirect_to user_collections_path(@user), notice: 'Collection was successfully created.' }
+            format.json { render json: @collection, status: :created }
+          else
+            format.html { render :new }
+            format.json { render json: @collection.errors, status: :unprocessable_entity }
+          end
+        end
+    end
+
+    def show_collection
+        respond_to do |format|
+          format.html 
+          format.json { render json: {
+            set: @collection.flashcard_sets.map { |set| 
+              {
+                id: set.id,
+                name: set.name,
+                created_at: set.created_at,
+                updated_at: set.updated_at
+              }
+            },
+            user: {
+              id: @user.id,
+              email: @user.email
+            }
+          } }
+        end
+    end
+   
+    def update_collection
+        respond_to do |format|
+          if @collection.update(collection_params)
+            format.html { redirect_to user_collection_path(@user, @collection), notice: 'Collection was successfully updated.' }
+            format.json { render json: @collection, status: :ok }
+          else
+            format.html { render :edit }
+            format.json { render json: @collection.errors, status: :unprocessable_entity }
+          end
+        end
+    end
   
+    def destroy_collection
+        @collection.destroy
+        respond_to do |format|
+            format.html { redirect_to user_collections_path(@user), notice: 'Collection was successfully deleted.' }
+            format.json { head :no_content }
+        end
+    end
+
+
     private
   
     def user_params
@@ -87,5 +177,12 @@ class UsersController < ApplicationController
         end
       end
     end
-  end
+
+    def set_collection
+        @collection = @user.collections.find_by(id: params[:collection_id])
+        return render json: { error: 'Collection not found' }, status: :not_found unless @collection
+    end
+
+
+end
   

@@ -22,8 +22,10 @@ RSpec.describe "Users API", type: :request do
   end
 
   let!(:admin_user) { User.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password', admin: true) }
-  let!(:user) { User.create!(email: 'test@example.com', password: 'password', password_confirmation: 'password', admin: false) }
+  let!(:user) { User.create!(email: 'testing3@example.com', password: 'password', password_confirmation: 'password', admin: false) }
   let(:headers) { { 'Accept' => 'application/json', 'Content-Type' => 'application/json' } }
+  let!(:flashcard_set1) { FlashcardSet.create!(name: 'Set 1', user: user) }
+  let!(:flashcard_set2) { FlashcardSet.create!(name: 'Set 2', user: user) }
 
   before { sign_in user }
 
@@ -145,6 +147,32 @@ RSpec.describe "Users API", type: :request do
         put "/users/99999",
             params: { user: { email: 'nonexistent@example.com' } }.to_json,
             headers: headers
+
+        expect(response).to have_http_status(:not_found)
+
+        json_response = JSON.parse(response.body)
+        expect(json_response['error']).to eq('User not found')
+      end
+    end
+  end
+
+  describe 'GET /users/:user_id/sets' do
+    context 'when the user exists' do
+      it 'returns the flashcard sets for the user' do
+        get "/users/#{user.id}/sets", headers: { 'Accept' => 'application/json' }
+
+        expect(response).to have_http_status(:ok)
+
+        json_response = JSON.parse(response.body)
+        expect(json_response.length).to eq(2)
+        expect(json_response[0]['name']).to eq(flashcard_set1.name)
+        expect(json_response[1]['name']).to eq(flashcard_set2.name)
+      end
+    end
+
+    context 'when the user does not exist' do
+      it 'returns a 404 not found' do
+        get '/users/999999/sets', headers: { 'Accept' => 'application/json' }
 
         expect(response).to have_http_status(:not_found)
 

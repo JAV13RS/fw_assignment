@@ -1,0 +1,18 @@
+<h1>Collections</h1>
+
+<ul>
+  <% @collections.each do |collection| %>
+    <li>
+      <ul>
+        <% collection.flashcard_sets.each do |set| %>
+          <li><%= set.name %></li>
+        <% end %>
+      </ul>
+      <%= link_to 'Show', user_collection_path(@user, collection) %>
+      <%= link_to 'Edit', edit_user_collection_path(@user, collection) %>
+      <%= link_to 'Delete', user_collection_path(@user, collection), method: :delete, data: { confirm: 'Are you sure?' } %>
+    </li>
+  <% end %>
+</ul>
+
+<%= link_to 'New Collection', new_user_collection_path(@user) %>

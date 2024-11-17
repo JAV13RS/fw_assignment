@@ -7,9 +7,11 @@ RSpec.describe "FlashcardSets API", type: :request do
   let(:flashcard_set_id) { flashcard_set.id }
   let(:valid_attributes) { { name: 'Updated Name' }.to_json }
   
+  
+
   # Test index action
   describe 'GET /sets' do
-    before { get '/sets' }  
+    before { get '/sets'}  
 
     it 'returns flashcard sets' do
       expect(response).to have_http_status(200) 
@@ -19,7 +21,10 @@ RSpec.describe "FlashcardSets API", type: :request do
 
   # Test create action
   describe 'POST /sets' do
-    let(:valid_attributes) { { name: 'New Set' }.to_json }
+    before do
+      sign_in user 
+    end
+    let(:valid_attributes) { { name: 'New Set'}.to_json }
   
     it 'creates a flashcard set' do
       expect {
