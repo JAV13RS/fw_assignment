@@ -1,13 +1,9 @@
 <h1>Edit Collection</h1>
-
-<%= form_with model: @collection, url: user_collection_path(@user, @collection), method: :put do |form| %>
+<%= form_with(model: [@user, @collection]) do |form| %>
   <div>
-    <%= form.label :comment %>
-    <%= form.text_area :comment %>
+    <%= form.label :name %>
+    <%= form.text_field :name, value: @collection.name %>
   </div>
 
-  <div>
-    <%= form.submit 'Update Collection' %>
-  </div>
+  <%= form.submit %>
 <% end %>
-<%= link_to 'Back', user_collection_path(@user, @collection) %>

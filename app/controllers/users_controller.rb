@@ -113,6 +113,7 @@ class UsersController < ApplicationController
     end
 
     def show_collection
+        @collection = @user.collections.find_by(id: params[:collection_id])
         respond_to do |format|
           format.html 
           format.json { render json: {
@@ -133,6 +134,7 @@ class UsersController < ApplicationController
     end
    
     def update_collection
+        @collection = @user.collections.find_by(id: params[:collection_id])
         respond_to do |format|
           if @collection.update(collection_params)
             format.html { redirect_to user_collection_path(@user, @collection), notice: 'Collection was successfully updated.' }
@@ -145,6 +147,7 @@ class UsersController < ApplicationController
     end
   
     def destroy_collection
+        @collection = @user.collections.find_by(id: params[:collection_id])
         @collection.destroy
         respond_to do |format|
             format.html { redirect_to user_collections_path(@user), notice: 'Collection was successfully deleted.' }
@@ -182,7 +185,5 @@ class UsersController < ApplicationController
         @collection = @user.collections.find_by(id: params[:collection_id])
         return render json: { error: 'Collection not found' }, status: :not_found unless @collection
     end
-
-
 end
   

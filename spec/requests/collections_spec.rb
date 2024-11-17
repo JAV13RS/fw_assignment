@@ -5,7 +5,6 @@ RSpec.describe "Collections API", type: :request do
   let!(:collections) { create_list(:collection, 3, user: user) }
   let(:flashcard_set) { create(:flashcard_set) }
 
-  # Helper method to parse JSON response
   def json
     JSON.parse(response.body)
   end
@@ -17,7 +16,7 @@ RSpec.describe "Collections API", type: :request do
       'Content-Type' => 'application/json'
     }
   end
-
+  # tests for /users/:user_id/collections
   describe "GET /users/:user_id/collections" do
     it "returns all collections for the user" do
       get "/users/#{user.id}/collections", headers: headers

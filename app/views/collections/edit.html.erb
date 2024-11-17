@@ -1,9 +1,10 @@
 <h1>Edit Collection</h1>
-<%= form_with(model: [@user, @collection]) do |form| %>
+<%= form_with(model: @collection, local: true) do |form| %>
   <div>
     <%= form.label :name %>
     <%= form.text_field :name, value: @collection.name %>
   </div>
-
-  <%= form.submit %>
+  <div>
+    <%= form.submit "Update Collection" %>
+  </div>
 <% end %>

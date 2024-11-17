@@ -1,9 +1,10 @@
-<h1><%= @collection.comment %></h1>
+<h1><%= @collection.name %></h1>
 
 <ul>
-  <% @collection.flashcard_sets.each do |set| %>
+    <% @collection.flashcard_sets.each do |set| %>
     <li><%= set.name %></li>
-  <% end %>
+    <% end %>
 </ul>
 
-<%= link_to 'Back to Collections', user_collections_path(@user) %>
+<%= link_to 'Edit', edit_user_collection_path(@user, @collection) %> |
+<%= link_to 'Back', user_collections_path(@user) %>
