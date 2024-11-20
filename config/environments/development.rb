@@ -33,6 +33,8 @@ Rails.application.configure do
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
+  
+  config.reload_classes_only_on_change = false
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false

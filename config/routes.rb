@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'users/registrations' }
+  
+  resources :collections do
+    get 'random', on: :collection
+    resources :flashcard_sets
+  end
 
   resources :flashcard_sets, path: 'sets', except: [:new, :edit] do
     resources :flashcards, only: [:index, :create]
@@ -22,10 +27,5 @@ Rails.application.routes.draw do
   
 
   get '/users/:user_id/sets', to: 'users#flashcard_sets'
-  resources :collections do
-    get 'random', on: :collection
-  end
-  resources :collections
-
   root 'flashcard_sets#index'
 end

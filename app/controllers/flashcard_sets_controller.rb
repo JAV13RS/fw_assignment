@@ -1,4 +1,5 @@
 class FlashcardSetsController < ApplicationController
+  before_action :set_collection, only: %i[create new]
   before_action :set_flashcard_set, only: %i[show update destroy comment cards]
   
   def index
@@ -16,16 +17,22 @@ class FlashcardSetsController < ApplicationController
     end
   end
 
+  def new
+    @flashcard_set = FlashcardSet.new
+  end
+
   def create
-    @flashcard_set = FlashcardSet.new(name: params[:name], user_id: current_user.id)
-  
+    @flashcard_set = FlashcardSet.new(flashcard_set_params)
+    @flashcard_set.user_id = current_user.id
+    @flashcard_set.collection_id = @collection.id if @collection
+
     respond_to do |format|
       if flashcard_sets_today >= 20
         format.json { render json: { message: "You have reached the maximum number of flashcard sets allowed today" }, status: :too_many_requests }
         format.html { redirect_to flashcard_sets_path, alert: "You have reached the maximum number of flashcard sets allowed today." }
       elsif @flashcard_set.save
         format.json { render json: @flashcard_set, status: :created }
-        format.html { redirect_to @flashcard_set, notice: 'Flashcard set created successfully.' }
+        format.html { redirect_to collection_flashcard_sets_path(@collection), notice: 'Flashcard set created successfully.' }
       else
         format.json { render json: @flashcard_set.errors, status: :unprocessable_entity }
         format.html { render :new }
@@ -78,6 +85,10 @@ class FlashcardSetsController < ApplicationController
   end
 
   private
+
+  def set_collection
+    @collection = Collection.find(params[:collection_id]) if params[:collection_id]
+  end
 
   def set_flashcard_set
     @flashcard_set = FlashcardSet.find(params[:id])

@@ -7,5 +7,9 @@
         <li><%= set.name %></li>
       </ul>
     <% end %>
+    <%= link_to 'Show', collection_path(collection) %>
   <% end %>
+
 </ul>
+
+<%= link_to 'New Collection', new_collection_path %>
