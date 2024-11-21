@@ -1,0 +1,31 @@
+<h1>Create a New Flashcard</h1>
+
+<%= form_with(model: [@flashcard_set, @flashcard], local: true) do |form| %>
+  <%= form.hidden_field :collection_id, value: @collection.id %>
+  <% if @flashcard.errors.any? %>
+    <div>
+      <h2>Errors</h2>
+      <ul>
+        <% @flashcard.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :question %>
+    <%= form.text_area :question, rows: 3 %>
+  </div>
+
+  <div>
+    <%= form.label :answer %>
+    <%= form.text_area :answer, rows: 3 %>
+  </div>
+
+  <div>
+    <%= form.submit 'Create Flashcard' %>
+  </div>
+<% end %>
+
+<%= link_to 'Back to Flashcard Sets', flashcard_sets_path %>

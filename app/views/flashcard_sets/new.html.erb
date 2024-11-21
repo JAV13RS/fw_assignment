@@ -1,6 +1,7 @@
 <h1>FlashcardSets#new</h1>
 
 <%= form_with(model: @flashcard_set, url: collection_flashcard_sets_path(@collection), local: true) do |form| %>  <% if @flashcard_set.errors.any? %>
+    <%= f.hidden_field :collection_id, value: @collection.id %>
     <div>
       <h2><%= pluralize(@flashcard_set.errors.count, "error") %> stopped this flashcard_set from being saved:</h2>
       <ul>
@@ -21,4 +22,5 @@
   </div>
 <% end %>
 
-<%= link_to 'Back', flashcard_sets_path %>
+
+<%= link_to 'Back to sets', collection_flashcard_sets_path(@collection) %>

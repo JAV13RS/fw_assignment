@@ -35,13 +35,10 @@ class CollectionsController < ApplicationController
   end
 
   def create
-    # Extract the flashcard set parameters from the request
     flashcard_sets_params = collection_params[:flashcard_sets] || []
   
-    # Fetch the actual FlashcardSet records from the database
     flashcard_sets = FlashcardSet.where(id: flashcard_sets_params.map { |set| set[:setID] })
   
-    # Validate that all flashcard sets provided exist
     if flashcard_sets.count != flashcard_sets_params.size
       respond_to do |format|
         format.json { render json: { error: "Some flashcard sets not found" }, status: :unprocessable_entity }
@@ -50,15 +47,11 @@ class CollectionsController < ApplicationController
       return
     end
   
-    # Initialize the collection with the permitted parameters
     collection = current_user.collections.new(collection_params.except(:flashcard_sets))
   
-    # Assign the fetched FlashcardSet records to the collection
     collection.flashcard_sets = flashcard_sets
   
-    # Save the collection and handle response
     if collection.save
-      # Instead of returning the collection object, return an array of flashcard sets
       flashcard_sets_data = flashcard_sets.map do |flashcard_set|
         {
           comment: flashcard_set.comments.first&.comment,

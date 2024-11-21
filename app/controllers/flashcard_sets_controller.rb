@@ -1,5 +1,5 @@
 class FlashcardSetsController < ApplicationController
-  before_action :set_collection, only: %i[create new]
+  before_action :set_collection, only: %i[create new index]
   before_action :set_flashcard_set, only: %i[show update destroy comment cards]
   
   def index
@@ -11,6 +11,7 @@ class FlashcardSetsController < ApplicationController
   end
 
   def show
+    @collection = @flashcard_set.collection
     respond_to do |format|
       format.json { render json: @flashcard_set, include: ['comments'], status: :ok }
       format.html { render :show }  
@@ -38,6 +39,11 @@ class FlashcardSetsController < ApplicationController
         format.html { render :new }
       end
     end
+  end
+
+
+  def edit
+    @flashcard_set = FlashcardSet.find(params[:id])
   end
 
   def update
@@ -73,7 +79,7 @@ class FlashcardSetsController < ApplicationController
       end
     end
   end
-
+  
   def cards
     flashcards = @flashcard_set.flashcards
     flashcards = flashcards.shuffle if params[:shuffle].present? && ActiveModel::Type::Boolean.new.cast(params[:shuffle])

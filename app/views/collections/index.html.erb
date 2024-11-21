@@ -1,15 +1,11 @@
 <h1>Collections</h1>
 <ul>
   <% @collections.each do |collection| %>
-    <li><%= collection.name %></li>
-    <% collection.flashcard_sets.each do |set| %>
-      <ul>
-        <li><%= set.name %></li>
-      </ul>
+    <% if collection.user_id == current_user.id%>
+      <li><%= collection.name %></li>
+    <%= link_to 'Open Collection', collection_path(collection) %>
     <% end %>
-    <%= link_to 'Show', collection_path(collection) %>
   <% end %>
-
 </ul>
 
 <%= link_to 'New Collection', new_collection_path %>

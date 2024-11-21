@@ -6,8 +6,8 @@ Rails.application.routes.draw do
     resources :flashcard_sets
   end
 
-  resources :flashcard_sets, path: 'sets', except: [:new, :edit] do
-    resources :flashcards, only: [:index, :create]
+  resources :flashcard_sets, path: 'sets', except: [:new] do
+    resources :flashcards, only: [:new, :create, :edit, :update, :destroy]
     member do
       post :comment  
       get :cards     
@@ -27,5 +27,5 @@ Rails.application.routes.draw do
   
 
   get '/users/:user_id/sets', to: 'users#flashcard_sets'
-  root 'flashcard_sets#index'
+  root 'collections#index'
 end

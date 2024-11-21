@@ -1,0 +1,11 @@
+<h1>Flashcards:</h1>
+
+<% @flashcard_set.flashcards.each do |flashcard| %>
+  <div class="flashcard">
+    <p><strong>Question:</strong> <%= flashcard.question %></p>
+    <p><strong>Answer:</strong> <%= flashcard.answer %></p>
+  </div>
+<% end %>
+
+
+<%= link_to 'New Collection', new_collection_path %>
