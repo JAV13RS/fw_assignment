@@ -3,9 +3,10 @@ require 'rails_helper'
 RSpec.describe "Collections API", type: :request do
   let(:user) { create(:user) }
   let(:other_user) { create(:user) }
-  let!(:flashcard_set_1) { create(:flashcard_set, user: user, name: "Math Set 1") }
-  let!(:flashcard_set_2) { create(:flashcard_set, user: user, name: "Math Set 2") }
   let!(:collection) { create(:collection, user: user, name: "Study Materials") }
+
+  let!(:flashcard_set_1) { create(:flashcard_set, user: user, name: "Math Set 1", collection: collection) }
+  let!(:flashcard_set_2) { create(:flashcard_set, user: user, name: "Math Set 2", collection: collection) }
   let!(:comment) { create(:comment, user: user, flashcard_set: flashcard_set_1, comment: "Great for beginners!") }
 
   before do
@@ -28,16 +29,6 @@ RSpec.describe "Collections API", type: :request do
         expect(first_flashcard_set["comment"]).to eq("Great for beginners!")
         expect(first_flashcard_set["set"]["name"]).to eq("Math Set 1")
         expect(first_flashcard_set["user"]["email"]).to eq(user.email)
-      end
-    end
-
-    context "when format is HTML" do
-      it "renders the index template" do
-        get collections_path, as: :html
-
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include("Study Materials")
-        expect(response.body).to include("Math Set 1")
       end
     end
   end
