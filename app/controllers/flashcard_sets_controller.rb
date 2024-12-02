@@ -33,7 +33,7 @@ class FlashcardSetsController < ApplicationController
         format.html { redirect_to flashcard_sets_path, alert: "You have reached the maximum number of flashcard sets allowed today." }
       elsif @flashcard_set.save
         format.json { render json: @flashcard_set, status: :created }
-        format.html { redirect_to collection_flashcard_sets_path(@collection), notice: 'Flashcard set created successfully.' }
+        format.html { redirect_to @flashcard_set, flash[:notice] = "Flashcard set created successfully." }
       else
         format.json { render json: @flashcard_set.errors, status: :unprocessable_entity }
         format.html { render :new }

@@ -4,7 +4,9 @@
 <% @flashcard_set.flashcards.each do |flashcard| %>
   <div class="flashcard">
     <p><strong>Question:</strong> <%= flashcard.question %></p>
-  </div>
+    <%= link_to 'Open Flashcard', flashcard_set_flashcard_path(@flashcard_set, flashcard) %>
+
+  </div> 
 <% end %>
 
 <h2>Comments:</h2>

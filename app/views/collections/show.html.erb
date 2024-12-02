@@ -11,8 +11,9 @@
 
 <%= link_to 'Add Flashcard Set', new_collection_flashcard_set_path(@collection) %> |
 <%= link_to 'Edit', edit_collection_path(@collection) %> |
+<%= link_to 'Back', collections_path %>
+
 
 <%= button_to 'Delete Collection', collection_path(@collection), method: :delete, data: { confirm: 'Are you sure?' } %>
 <br>
-<%= link_to 'Back', collections_path %>
 
