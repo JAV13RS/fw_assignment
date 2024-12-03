@@ -10,8 +10,10 @@ class FlashcardsController < ApplicationController
     end
 
     def new
-        @flashcard = @flashcard_set.flashcards.new
-      end
+        @flashcard_set = FlashcardSet.find(params[:flashcard_set_id]) 
+        @collection = @flashcard_set.collection                      
+        @flashcard = Flashcard.new
+    end
 
     def create 
         flashcard = @flashcard_set.flashcards.new(flashcard_params)
@@ -19,7 +21,7 @@ class FlashcardsController < ApplicationController
         respond_to do |format|
             if flashcard.save
                 format.json { render json: flashcard, status: :created }
-                format.html { redirect_to flashcard_set_flashcards_path(@flashcard_set), notice: 'Flashcard created successfully.' }
+                format.html { redirect_to flashcard_set_path(@flashcard_set), notice: 'Flashcard created successfully.' }
             else
                 format.json { render json: flashcard.errors, status: :unprocessable_entity }
                 format.html { render :new }

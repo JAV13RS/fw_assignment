@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   
   resources :collections do
     get 'random', on: :collection
-    resources :flashcard_sets
+    resources :flashcard_sets 
   end
 
   resources :flashcard_sets, path: 'sets', except: [:new] do

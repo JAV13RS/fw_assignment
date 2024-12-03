@@ -3,10 +3,17 @@ class CollectionsController < ApplicationController
   before_action :validate_headers, only: [:create, :update, :destroy, :index, :show, :random], if: -> { request.format.json? }
 
   def index
-    @collections = Collection.includes(flashcard_sets: :comments).all
+
+    if user_signed_in?
+      @collections = current_user.collections.includes(flashcard_sets: :comments)
+    else
+      @collections = Collection.includes(flashcard_sets: :comments).all
+    end
+
   
+
     respond_to do |format|
-      format.html 
+      format.html
       format.json do
         collections_data = @collections.map do |collection|
           collection.flashcard_sets.map do |flashcard_set|

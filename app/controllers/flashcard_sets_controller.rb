@@ -3,7 +3,12 @@ class FlashcardSetsController < ApplicationController
   before_action :set_flashcard_set, only: %i[show update destroy comment cards]
   
   def index
-    @flashcard_sets = FlashcardSet.all
+    @collection = Collection.find(params[:collection_id]) if params[:collection_id] 
+    if @collection
+      @flashcard_sets = @collection.flashcard_sets 
+    else
+      @flashcard_sets = FlashcardSet.all 
+    end
     respond_to do |format|
       format.json { render json: @flashcard_sets, status: :ok }
       format.html { render :index }  
