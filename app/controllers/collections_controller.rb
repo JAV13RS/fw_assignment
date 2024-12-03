@@ -1,16 +1,14 @@
 class CollectionsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :new, :show]
   before_action :validate_headers, only: [:create, :update, :destroy, :index, :show, :random], if: -> { request.format.json? }
 
   def index
-
     if user_signed_in?
       @collections = current_user.collections.includes(flashcard_sets: :comments)
     else
       @collections = Collection.includes(flashcard_sets: :comments).all
     end
 
-  
 
     respond_to do |format|
       format.html

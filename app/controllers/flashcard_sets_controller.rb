@@ -38,7 +38,7 @@ class FlashcardSetsController < ApplicationController
         format.html { redirect_to flashcard_sets_path, alert: "You have reached the maximum number of flashcard sets allowed today." }
       elsif @flashcard_set.save
         format.json { render json: @flashcard_set, status: :created }
-        format.html { redirect_to @flashcard_set, flash[:notice] = "Flashcard set created successfully." }
+        format.html { redirect_to @flashcard_set, notice: 'Flashcard set created successfully.' }
       else
         format.json { render json: @flashcard_set.errors, status: :unprocessable_entity }
         format.html { render :new }
@@ -86,9 +86,12 @@ class FlashcardSetsController < ApplicationController
   end
   
   def cards
-    flashcards = @flashcard_set.flashcards
-    flashcards = flashcards.shuffle if params[:shuffle].present? && ActiveModel::Type::Boolean.new.cast(params[:shuffle])
+    @flashcards = @flashcard_set.flashcards
 
+    if params[:shuffle].present? && ActiveModel::Type::Boolean.new.cast(params[:shuffle])
+      @flashcards = @flashcards.shuffle
+    end
+    
     respond_to do |format|
       format.json { render json: flashcards, status: :ok }
       format.html { render :cards }  

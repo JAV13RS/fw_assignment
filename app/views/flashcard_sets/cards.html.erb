@@ -1,10 +1,134 @@
-<h1>Cards for <%= @flashcard_set.name %></h1>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Page Title -->
+      <h1 class="text-center mb-4">Test Yourself - <%= @flashcard_set.name %></h1>
 
-<% @flashcard_set.flashcards.each do |flashcard| %>
-  <div>
-    <p><%= flashcard.question %></p>
-    <p><%= flashcard.answer %></p>
+      <!-- Flashcard Container -->
+      <div id="flashcard-container" class="text-center">
+        <div class="flashcard">
+          <p id="question" class="flashcard-text question"><%= @flashcards.first.question %></p>
+          <p id="answer" class="flashcard-text answer d-none"><%= @flashcards.first.answer %></p>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <button id="show-answer" class="btn btn-info btn-lg flashcard-button">Show Answer</button>
+      </div>
+
+      <div class="text-center mt-3">
+        <button id="next-flashcard" class="btn btn-primary btn-lg flashcard-button">Next Flashcard</button>
+      </div>
+
+      <div class="text-center mt-3">
+        <%= link_to 'Shuffle Flashcards', cards_flashcard_set_path(@flashcard_set, shuffle: true), class: 'btn btn-primary btn-lg flashcard-button' %>
+        <%= link_to 'Back to Set', flashcard_set_path(@flashcard_set), class: 'btn btn-secondary btn-lg flashcard-button' %>
+      </div>
+    </div>
   </div>
-<% end %>
+</div>
 
-<%= link_to 'Back to set', flashcard_set_path(@flashcard_set) %>
+<style>
+  .flashcard {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+  }
+
+  .flashcard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .flashcard-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .question {
+    font-size: 2rem;
+    color: #007bff;
+  }
+
+  .answer {
+    font-size: 1.5rem;
+    color: #28a745;
+  }
+
+  .d-none {
+    display: none;
+  }
+
+  .flashcard-button {
+    width: 200px;
+    padding: 15px;
+    font-size: 1.2rem;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+  }
+
+  .flashcard-button:hover {
+    background-color: #0056b3;
+    cursor: pointer;
+  }
+
+  #next-flashcard {
+    background-color: #28a745;
+  }
+
+  #next-flashcard:hover {
+    background-color: #218838;
+  }
+
+  #show-answer {
+    background-color: #ffc107;
+  }
+
+  #show-answer:hover {
+    background-color: #e0a800;
+  }
+
+  .text-center {
+    margin-top: 20px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let currentFlashcardIndex = 0;
+    const flashcards = <%= raw @flashcards.to_json %>;
+
+    // Function to show the answer
+    function showAnswer() {
+      document.getElementById('answer').classList.remove('d-none'); // Show the answer
+      document.getElementById('show-answer').disabled = true; // Disable the button after showing the answer
+    }
+
+    // Attach event listener for "Show Answer" button
+    document.getElementById('show-answer').addEventListener('click', showAnswer);
+
+    // Handle the "Next Flashcard" button click
+    document.getElementById('next-flashcard').addEventListener('click', function() {
+      currentFlashcardIndex++;
+
+      if (currentFlashcardIndex < flashcards.length) {
+        document.getElementById('question').textContent = flashcards[currentFlashcardIndex].question;
+        document.getElementById('answer').textContent = flashcards[currentFlashcardIndex].answer;
+        document.getElementById('answer').classList.add('d-none'); // Hide the answer again
+        document.getElementById('show-answer').disabled = false; // Re-enable the "Show Answer" button
+      } else {
+        alert("You've completed all the flashcards!");
+        currentFlashcardIndex = 0; // Reset to the first flashcard
+        document.getElementById('question').textContent = flashcards[0].question;
+        document.getElementById('answer').textContent = flashcards[0].answer;
+        document.getElementById('answer').classList.add('d-none');
+        document.getElementById('show-answer').disabled = false;
+      }
+    });
+  });
+</script>

@@ -1,26 +1,37 @@
-<h1>FlashcardSets#new</h1>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <!-- Page Title -->
+      <h1 class="text-center mb-4">Create New Flashcard Set</h1>
 
-<%= form_with(model: @flashcard_set, url: collection_flashcard_sets_path(@collection), local: true) do |form| %>  <% if @flashcard_set.errors.any? %>
-    <%= f.hidden_field :collection_id, value: @collection.id %>
-    <div>
-      <h2><%= pluralize(@flashcard_set.errors.count, "error") %> stopped this flashcard_set from being saved:</h2>
-      <ul>
-        <% @flashcard_set.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+      <!-- Error Messages -->
+      <% if @flashcard_set.errors.any? %>
+        <div class="alert alert-danger">
+          <h4 class="alert-heading"><%= pluralize(@flashcard_set.errors.count, "error") %> prevented this flashcard set from being saved:</h4>
+          <ul>
+            <% @flashcard_set.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <!-- Form -->
+      <%= form_with(model: @flashcard_set, url: collection_flashcard_sets_path(@collection), local: true, class: 'needs-validation') do |form| %>
+        <%= form.hidden_field :collection_id, value: @collection.id %>
+        
+        <!-- Name Field -->
+        <div class="mb-3">
+          <%= form.label :name, class: 'form-label' %>
+          <%= form.text_field :name, class: 'form-control', placeholder: 'Enter flashcard set name' %>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="text-center">
+          <%= form.submit 'Create Flashcard Set', class: 'btn btn-primary' %>
+          <%= link_to 'Back to Sets', collection_flashcard_sets_path(@collection), class: 'btn btn-secondary ms-2' %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :name %>
-    <%= form.text_field :name %>
   </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
-
-
-<%= link_to 'Back to sets', collection_flashcard_sets_path(@collection) %>
+</div>

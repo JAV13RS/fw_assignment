@@ -1,10 +1,18 @@
-<h1>Collections</h1>
-<ul>
-  <% @collections.each do |collection| %>
-    
-      <li><%= collection.name %></li>
-    <%= link_to 'Open Collection', collection_path(collection) %>
-  <% end %>
-</ul>
-
-<%= link_to 'New Collection', new_collection_path %>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="text-center mb-4">Collections</h1>
+      <ul class="list-group">
+        <% @collections.each do |collection| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><%= collection.name %></span>
+            <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
+          </li>
+        <% end %>
+      </ul>
+      <div class="text-center mt-4">
+        <%= link_to 'New Collection', new_collection_path, class: 'btn btn-success' %>
+      </div>
+    </div>
+  </div>
+</div>

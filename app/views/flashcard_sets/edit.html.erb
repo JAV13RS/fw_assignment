@@ -1,25 +1,32 @@
-<h1>Edit Flashcard Set</h1>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h1 class="text-center mb-4">Edit Flashcard Set</h1>
 
-<%= form_with(model: @flashcard_set, local: true) do |form| %>
-  <% if @flashcard_set.errors.any? %>
-    <div>
-      <h2>Errors</h2>
-      <ul>
-        <% @flashcard_set.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+      <% if @flashcard_set.errors.any? %>
+        <div class="alert alert-danger">
+          <h4 class="alert-heading"><%= pluralize(@flashcard_set.errors.count, "error") %> prevented this flashcard set from being saved:</h4>
+          <ul>
+            <% @flashcard_set.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_with(model: @flashcard_set, url: collection_flashcard_sets_path(@collection), local: true, class: 'needs-validation') do |form| %>
+        <%= form.hidden_field :collection_id, value: @collection.id %>
+        
+        <div class="mb-3">
+          <%= form.label :name, class: 'form-label' %>
+          <%= form.text_field :name, class: 'form-control', placeholder: 'Enter flashcard set name' %>
+        </div>
+        
+        <div class="text-center">
+          <%= form.submit 'Create Flashcard Set', class: 'btn btn-primary' %>
+          <%= link_to 'Back to Sets', collection_flashcard_sets_path(@collection), class: 'btn btn-secondary ms-2' %>
+        </div>
+      <% end %>
     </div>
-  <% end %>
-
-  <div>
-    <%= form.label :name %>
-    <%= form.text_field :name %>
   </div>
-
-  <div>
-    <%= form.submit 'Update Flashcard Set' %>
-  </div>
-<% end %>
-
-<%= link_to 'Back to sets', flashcard_sets_path %>
+</div>

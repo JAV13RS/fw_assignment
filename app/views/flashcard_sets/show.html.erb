@@ -1,18 +1,55 @@
-<h1><%= @flashcard_set.name %></h1>
+<div class="container mt-5">
+  <div class="row mb-5 pb-3">
+    <div class="col-md-12">
+      <h1 class="text-center mb-4"><%= @flashcard_set.name %></h1>
 
-<h2>Flashcards:</h2>
-<% @flashcard_set.flashcards.each do |flashcard| %>
-  <div class="flashcard">
-    <p><strong>Question:</strong> <%= flashcard.question %></p>
-    <%= link_to 'Open Flashcard', flashcard_set_flashcard_path(@flashcard_set, flashcard) %>
+      <h2>Flashcards:</h2>
+      <% @flashcard_set.flashcards.each do |flashcard| %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <p><strong>Question:</strong> <%= flashcard.question %></p>
+            <%= link_to 'Open Flashcard', flashcard_set_flashcard_path(@flashcard_set, flashcard), class: 'btn btn-primary btn-sm' %>
+          </div>
+        </div>
+      <% end %>
 
-  </div> 
-<% end %>
+      <h2>Comments:</h2>
+      <% @flashcard_set.comments.each do |comment| %>
+        <div class="card mb-2">
+          <div class="card-body">
+            <p><%= comment.comment %></p>
+            <p><small><%= comment.user.email %></small></p>
+          </div>
+        </div>
+      <% end %>
 
-<h2>Comments:</h2>
-<% @flashcard_set.comments.each do |comment| %>
-  <p><%= comment.comment %> - <%= comment.user.email %></p>
-<% end %>
+      <div class="fixed-buttons">
+        <%= link_to 'Add Flashcard', new_flashcard_set_flashcard_path(@flashcard_set), class: 'btn btn-success' %>
+        <%= link_to 'Test Yourself', cards_flashcard_set_path(@flashcard_set), class: 'btn btn-info btn-lg' %>
+        <%= link_to 'Back to Collections', collections_path, class: 'btn btn-secondary' %>
+      </div>
 
-<%= link_to 'Add Flashcard', new_flashcard_set_flashcard_path(@flashcard_set) %> |
-<%= link_to 'Back to collections', collections_path %>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fixed-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: adds some transparency */
+    padding: 10px;
+    z-index: 1000; /* Ensure it's above other content */
+  }
+
+  .fixed-buttons a {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+</style>

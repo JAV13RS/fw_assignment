@@ -1,12 +1,24 @@
-<h1>Flashcard Details</h1>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Page Title -->
+      <h1 class="text-center mb-4">Flashcard Details</h1>
 
-<div class="flashcard-details">
-  <p><strong>Question:</strong> <%= @flashcard.question %></p>
-  <p><strong>Answer:</strong> <%= @flashcard.answer %></p>
-</div>
+      <!-- Flashcard Details -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <p><strong>Question:</strong> <%= @flashcard.question %></p>
+          <p><strong>Answer:</strong> <%= @flashcard.answer %></p>
+        </div>
+      </div>
 
-<div class="flashcard-actions">
-    <%= link_to 'Edit Flashcard', edit_flashcard_set_flashcard_path(@flashcard_set, @flashcard), class: 'btn btn-primary' %>
-    <%= link_to 'Delete Flashcard', flashcard_set_flashcard_path(@flashcard_set, @flashcard), method: :delete, data: { confirm: 'Are you sure you want to delete this flashcard?' }, class: 'btn btn-danger' %>
-    <%= link_to 'Back to Flashcard Set', flashcard_set_path(@flashcard_set), class: 'btn btn-secondary' %>
+      <!-- Flashcard Actions -->
+      <div class="text-center">
+        <%= link_to 'Edit Flashcard', edit_flashcard_set_flashcard_path(@flashcard_set, @flashcard), class: 'btn btn-primary btn-lg me-2' %>
+        <%= link_to 'Delete Flashcard', flashcard_set_flashcard_path(@flashcard_set, @flashcard), method: :delete, data: { confirm: 'Are you sure you want to delete this flashcard?' }, class: 'btn btn-danger btn-lg me-2' %>
+        <%= link_to 'Back to Flashcard Set', flashcard_set_path(@flashcard_set), class: 'btn btn-secondary btn-lg' %>
+
+      </div>
+    </div>
+  </div>
 </div>
