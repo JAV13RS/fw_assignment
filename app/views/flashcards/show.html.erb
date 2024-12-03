@@ -15,9 +15,8 @@
       <!-- Flashcard Actions -->
       <div class="text-center">
         <%= link_to 'Edit Flashcard', edit_flashcard_set_flashcard_path(@flashcard_set, @flashcard), class: 'btn btn-primary btn-lg me-2' %>
-        <%= link_to 'Delete Flashcard', flashcard_set_flashcard_path(@flashcard_set, @flashcard), method: :delete, data: { confirm: 'Are you sure you want to delete this flashcard?' }, class: 'btn btn-danger btn-lg me-2' %>
+        <%= button_to 'Delete Flashcard', flashcard_set_flashcard_path(@flashcard_set, @flashcard), method: :delete, data: { confirm: 'Are you sure you want to delete this flashcard?' }, class: 'btn btn-danger btn-lg me-2' %>
         <%= link_to 'Back to Flashcard Set', flashcard_set_path(@flashcard_set), class: 'btn btn-secondary btn-lg' %>
-
       </div>
     </div>
   </div>

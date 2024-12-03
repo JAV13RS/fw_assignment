@@ -1,5 +1,5 @@
 class FlashcardsController < ApplicationController
-    before_action :set_flashcard_set, only: %i[create new index]
+    before_action :set_flashcard_set, only: %i[create new index destroy show update]
 
     def index
         flashcards = Flashcard.all
@@ -34,6 +34,7 @@ class FlashcardsController < ApplicationController
         flashcard.destroy
         respond_to do |format|
             format.json { head :no_content }
+            format.html { redirect_to flashcard_set_path(@flashcard_set), notice: 'Flashcard deleted successfully.' }
         end
     end
 
@@ -42,7 +43,7 @@ class FlashcardsController < ApplicationController
         respond_to do |format|
             if flashcard.update(flashcard_params)
                 format.json { render json: flashcard }
-                format.html { redirect_to flashcards_path, notice: 'Flashcard updated successfully.' }
+                format.html { redirect_to flashcard_set_path(@flashcard_set), notice: 'Flashcard updated successfully.' }
             else
                 format.json { render json: flashcard.errors, status: :unprocessable_entity }
                 format.html { render :edit }
@@ -62,6 +63,7 @@ class FlashcardsController < ApplicationController
             format.html { render :show }
         end
     end
+
     private 
 
     def flashcard_params

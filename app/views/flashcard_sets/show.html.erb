@@ -27,6 +27,11 @@
         <%= link_to 'Add Flashcard', new_flashcard_set_flashcard_path(@flashcard_set), class: 'btn btn-success' %>
         <%= link_to 'Test Yourself', cards_flashcard_set_path(@flashcard_set), class: 'btn btn-info btn-lg' %>
         <%= link_to 'Back to Collections', collections_path, class: 'btn btn-secondary' %>
+        
+        <%= button_to 'Delete Flashcard Set', flashcard_set_path(@flashcard_set), 
+            method: :delete, 
+            data: { confirm: 'Are you sure you want to delete this flashcard set?' }, 
+            class: 'btn btn-danger' %>
       </div>
 
     </div>
