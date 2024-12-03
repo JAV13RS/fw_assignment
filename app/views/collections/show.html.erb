@@ -3,16 +3,17 @@
   <% @collection.flashcard_sets.each do |set| %>
     <li>
       <%= set.name %> 
-      <%= link_to 'Open Flashcard Set', collection_flashcard_set_path(@collection, set) %>
+      <%= link_to 'Open Flashcard Set', flashcard_set_path(set) %>
     </li>
   <% end %>
 </ul>
- 
+
 
 <%= link_to 'Add Flashcard Set', new_collection_flashcard_set_path(@collection) %> |
 <%= link_to 'Edit', edit_collection_path(@collection) %> |
+<%= link_to 'Back', collections_path %>
+
 
 <%= button_to 'Delete Collection', collection_path(@collection), method: :delete, data: { confirm: 'Are you sure?' } %>
 <br>
-<%= link_to 'Back', collections_path %>
 

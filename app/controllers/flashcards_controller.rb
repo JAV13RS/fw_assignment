@@ -54,6 +54,14 @@ class FlashcardsController < ApplicationController
         @flashcard = Flashcard.find(params[:id])
     end
 
+    def show
+        @flashcard_set = FlashcardSet.find(params[:flashcard_set_id])
+        @flashcard = @flashcard_set.flashcards.find(params[:id])
+        respond_to do |format|
+            format.json { render json: flashcard }
+            format.html { render :show }
+        end
+    end
     private 
 
     def flashcard_params

@@ -5,8 +5,8 @@ Collection.destroy_all # Destroy collections next because they depend on flashca
 User.destroy_all       # Destroy users last because flashcard sets and collections depend on users
 
 # Recreate users first
-user1 = User.create!(email: "user1@example.com", password: "password123", password_confirmation: "password123", admin: false)
-user2 = User.create!(email: "user2@example.com", password: "password123", password_confirmation: "password123", admin: false)
+user1 = User.create!(email: "user1@example.com", password: "password", password_confirmation: "password", admin: false)
+user2 = User.create!(email: "user2@example.com", password: "password", password_confirmation: "password", admin: true)
 
 # Create flashcard sets and associate them with users
 set1 = FlashcardSet.create!(name: "Math Set 1", user: user1)
