@@ -97,31 +97,36 @@
 </style>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("turbo:load", function() {
     let currentFlashcardIndex = 0;
+    alertShown = false;
     const flashcards = <%= raw @flashcards.to_json %>;
 
-    // Function to show the answer
+ 
     function showAnswer() {
-      document.getElementById('answer').classList.remove('d-none'); // Show the answer
-      document.getElementById('show-answer').disabled = true; // Disable the button after showing the answer
+      document.getElementById('answer').classList.remove('d-none'); 
+      document.getElementById('show-answer').disabled = true; 
     }
 
-    // Attach event listener for "Show Answer" button
+
     document.getElementById('show-answer').addEventListener('click', showAnswer);
 
-    // Handle the "Next Flashcard" button click
+
     document.getElementById('next-flashcard').addEventListener('click', function() {
       currentFlashcardIndex++;
 
       if (currentFlashcardIndex < flashcards.length) {
         document.getElementById('question').textContent = flashcards[currentFlashcardIndex].question;
         document.getElementById('answer').textContent = flashcards[currentFlashcardIndex].answer;
-        document.getElementById('answer').classList.add('d-none'); // Hide the answer again
-        document.getElementById('show-answer').disabled = false; // Re-enable the "Show Answer" button
+        document.getElementById('answer').classList.add('d-none'); 
+        document.getElementById('show-answer').disabled = false; 
+        alertShown = false;
       } else {
-        alert("You've completed all the flashcards!");
-        currentFlashcardIndex = 0; // Reset to the first flashcard
+        if (!alertShown) {
+          alert("You have finished all the flashcards!");
+          alertShown = true;
+        }
+        currentFlashcardIndex = 0;
         document.getElementById('question').textContent = flashcards[0].question;
         document.getElementById('answer').textContent = flashcards[0].answer;
         document.getElementById('answer').classList.add('d-none');

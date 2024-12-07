@@ -12,15 +12,21 @@
         <% end %>
       </ul>
 
-      <div class="text-center mt-4">
-        <%= link_to 'Add Flashcard Set', new_collection_flashcard_set_path(@collection), class: 'btn btn-success' %>
-        <%= link_to 'Edit', edit_collection_path(@collection), class: 'btn btn-warning' %>
-        <%= button_to 'Delete Collection', collection_path(@collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
-      </div>
+      <% if @collection.user == current_user %>
+        <div class="text-center mt-4">
+          <%= link_to 'Add Flashcard Set', new_collection_flashcard_set_path(@collection), class: 'btn btn-success' %>
+          <%= link_to 'Edit', edit_collection_path(@collection), class: 'btn btn-warning' %>
+          <%= link_to 'Back', collections_path, class: 'btn btn-secondary' %>
+          <%= button_to 'Delete Collection', collection_path(@collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+        </div>
 
-      <div class="text-center mt-3">
-        <%= link_to 'Back', collections_path, class: 'btn btn-secondary' %>
-      </div>
+      <% else %>
+        <div class="text-center mt-3">
+          <%= link_to 'Back to All Collections', all_collections_path, class: 'btn btn-secondary' %>
+        </div>
+      <% end %>
+
+      
     </div>
   </div>
 </div>

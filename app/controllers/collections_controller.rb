@@ -147,8 +147,6 @@ class CollectionsController < ApplicationController
   end
 
   def collection_params
-    # Permit the 'name' and 'flashcard_sets' key (which should be an array of hashes)
     params.require(:collection).permit(:name, flashcard_sets: [:setID, :comment])
   end
-  
 end
