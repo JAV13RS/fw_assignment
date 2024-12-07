@@ -125,6 +125,15 @@ class CollectionsController < ApplicationController
     end
   end
 
+  def all_collections
+    @collections = Collection.where.not(user: current_user)
+    respond_to do |format|
+      format.html
+      format.json { render json: @collections, status: :ok }
+    end
+  end
+
+
   private
 
   def validate_headers

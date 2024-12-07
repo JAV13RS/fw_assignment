@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+<nav class="navbar navbar-expand-lg navbar-light bg-secondary sticky-top">
   <div class="container-fluid">
     <%= link_to "Flashcard App", root_path, class: "navbar-brand text-white" %>
 
@@ -18,13 +18,17 @@
           <li class="nav-item">
             <%= link_to "Flashcard Sets", flashcard_sets_path, class: "nav-link text-white" %>
           </li>
+          <li class="nav-item">
+            <%= link_to "All Collections", all_collections_path, class: "nav-link text-white" %>
+          </li>
         <% end %>
       </ul>
 
       <ul class="navbar-nav ms-auto">
         <% if user_signed_in? %>
           <li class="nav-item">
-            <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "nav-link text-white" %>
+            <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "nav-link text-white", data: { turbo_method: :delete } %>
+
           </li>
         <% else %>
           <li class="nav-item">
@@ -38,4 +42,3 @@
     </div>
   </div>
 </nav>
-

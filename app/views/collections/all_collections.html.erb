@@ -1,0 +1,21 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Other Users' Collections</h1>
+
+  <% if @collections.any? %>
+    <div class="row">
+      <% @collections.each do |collection| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= collection.name %></h5>
+              <p class="card-text"><strong>Created by:</strong> <%= collection.user.email %></p>
+              <%= link_to 'View Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-center">There are no collections from other users available.</p>
+  <% end %>
+</div>
