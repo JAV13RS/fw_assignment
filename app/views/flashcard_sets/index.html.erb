@@ -3,34 +3,66 @@
     <div class="col-md-12">
       <h1 class="text-center mb-4">Your Flashcard Sets</h1>
 
-      <% if @flashcard_sets.where(user: current_user).empty? %>
-        <div class="alert alert-info text-center">
-          You have no flashcard sets.
-        </div>
-      <% else %>
-        <div class="row">
-          <% @flashcard_sets.where(user: current_user).or(@flashcard_sets.where(user: User.where(admin: true))).reverse.each do |flashcard_set| %>
-            <div class="col-md-4 mb-4">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h5 class="card-title">
-                    <%= flashcard_set.name %>
-                  </h5>
+      <% if current_user.admin? %>
+        <% if @flashcard_sets.empty? %>
+          <div class="alert alert-info text-center">
+            There are no flashcard sets.
+          </div>
+        <% else %>
+          <div class="row">
+            <% @flashcard_sets.reverse.each do |flashcard_set| %>
+              <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <%= flashcard_set.name %>
+                    </h5>
 
-                  <p class="text-muted mb-2">
-                    <small><strong>Created on:</strong> <%= flashcard_set.created_at.strftime('%B %d, %Y') %></small>
-                  </p>
+                    <p class="text-muted mb-2">
+                      <small><strong>Created on:</strong> <%= flashcard_set.created_at.strftime('%B %d, %Y') %></small>
+                    </p>
 
-                  <div class="d-flex gap-2">
-                    <%= link_to 'Open Flashcard Set', flashcard_set_path(flashcard_set), class: 'btn btn-primary btn-sm' %>
-                    <%= link_to 'Edit', edit_flashcard_set_path(flashcard_set), class: 'btn btn-warning btn-sm' %>
-                    <%= button_to 'Delete', flashcard_set_path(flashcard_set), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                    <div class="d-flex gap-2">
+                      <%= link_to 'Open Flashcard Set', flashcard_set_path(flashcard_set), class: 'btn btn-primary btn-sm' %>
+                      <%= link_to 'Edit', edit_flashcard_set_path(flashcard_set), class: 'btn btn-warning btn-sm' %>
+                      <%= button_to 'Delete', flashcard_set_path(flashcard_set), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          <% end %>
-        </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <% if @flashcard_sets.where(user_id: current_user.id).empty? %>
+          <div class="alert alert-info text-center">
+            You have no flashcard sets.
+          </div>
+        <% else %>
+          <div class="row">
+            <% @flashcard_sets.where(user_id: current_user.id).reverse.each do |flashcard_set| %>
+              <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <%= flashcard_set.name %>
+                    </h5>
+
+                    <p class="text-muted mb-2">
+                      <small><strong>Created on:</strong> <%= flashcard_set.created_at.strftime('%B %d, %Y') %></small>
+                    </p>
+
+                    <div class="d-flex gap-2">
+                      <%= link_to 'Open Flashcard Set', flashcard_set_path(flashcard_set), class: 'btn btn-primary btn-sm' %>
+                      <%= link_to 'Edit', edit_flashcard_set_path(flashcard_set), class: 'btn btn-warning btn-sm' %>
+                      <%= button_to 'Delete', flashcard_set_path(flashcard_set), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
       <% end %>
 
       <div class="text-center mt-4 fixed-buttons">
