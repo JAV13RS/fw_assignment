@@ -17,6 +17,8 @@ class FlashcardSetsController < ApplicationController
 
   def show
     @collection = @flashcard_set.collection
+    @comment = Comment.new
+
     respond_to do |format|
       format.json { render json: @flashcard_set, include: ['comments'], status: :ok }
       format.html { render :show }  
@@ -72,11 +74,12 @@ class FlashcardSetsController < ApplicationController
   end
 
   def comment
-    comment = @flashcard_set.comments.create(comment_params.merge(user_id: current_user.id))
-
+    @comment = @flashcard_set.comments.new(comment_params)
+    @comment.user = current_user
+  
     respond_to do |format|
-      if comment.save
-        format.json { render json: comment, status: :created }
+      if @comment.save
+        format.json { render json: @comment, status: :created }  
         format.html { redirect_to @flashcard_set, notice: 'Comment added successfully.' }
       else
         format.json { render json: { error: 'Unable to create comment' }, status: :unprocessable_entity }
@@ -84,6 +87,7 @@ class FlashcardSetsController < ApplicationController
       end
     end
   end
+  
   
   def cards
     @flashcards = @flashcard_set.flashcards
@@ -116,6 +120,7 @@ class FlashcardSetsController < ApplicationController
   def comment_params
     params.require(:comment).permit(:comment)
   end
+  
 
   def flashcard_sets_today
     FlashcardSet.where("created_at >= ?", Time.zone.today.beginning_of_day).count

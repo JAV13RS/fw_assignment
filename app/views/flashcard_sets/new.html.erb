@@ -1,10 +1,8 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <!-- Page Title -->
       <h1 class="text-center mb-4">Create New Flashcard Set</h1>
 
-      <!-- Error Messages -->
       <% if @flashcard_set.errors.any? %>
         <div class="alert alert-danger">
           <h4 class="alert-heading"><%= pluralize(@flashcard_set.errors.count, "error") %> prevented this flashcard set from being saved:</h4>
@@ -16,17 +14,14 @@
         </div>
       <% end %>
 
-      <!-- Form -->
       <%= form_with(model: @flashcard_set, url: collection_flashcard_sets_path(@collection), local: true, class: 'needs-validation') do |form| %>
         <%= form.hidden_field :collection_id, value: @collection.id %>
         
-        <!-- Name Field -->
         <div class="mb-3">
           <%= form.label :name, class: 'form-label' %>
           <%= form.text_field :name, class: 'form-control', placeholder: 'Enter flashcard set name' %>
         </div>
         
-        <!-- Submit Button -->
         <div class="text-center">
           <%= form.submit 'Create Flashcard Set', class: 'btn btn-primary' %>
           <%= link_to 'Back to Sets', collection_flashcard_sets_path(@collection), class: 'btn btn-secondary ms-2' %>

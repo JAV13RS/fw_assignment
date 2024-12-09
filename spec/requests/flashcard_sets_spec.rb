@@ -22,8 +22,6 @@ RSpec.describe "FlashcardSets API", type: :request do
     end
   end
 
-  
-
   # Test create action
   describe 'POST /sets' do
 
@@ -156,6 +154,7 @@ RSpec.describe "FlashcardSets API", type: :request do
         expect(json_response['comment']).to eq('This is a great set!')
       end
     end
+    
     context 'when flashcard set does not exist' do
       let(:invalid_set_id) { 9999 }
   
