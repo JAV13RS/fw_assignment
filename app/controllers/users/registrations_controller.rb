@@ -59,19 +59,31 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # def after_inactive_sign_up_path_for(resource)
   #   super(resource)
   # end
+
+  def new 
+    @user = User.new
+  end
+
   def create
-    @user = User.new(user_params)
-  
-    respond_to do |format|
-      if @user.save
-        format.json { render json: @user, status: :created }
-        format.html { redirect_to user_url(@user), notice: 'User was successfully created.' }
-      else
-        format.json { render json: { error: @user.errors.full_messages }, status: :unprocessable_entity }
+    build_resource(sign_up_params)
+
+    if resource.save
+      sign_in(resource) 
+      respond_to do |format|
+        format.html { redirect_to user_path(resource), notice: 'Welcome! You have signed up successfully.' }
+        format.json { render json: user_path(resource), status: :created }
+      end
+    else
+      clean_up_passwords resource
+      set_minimum_password_length
+      respond_to do |format|
         format.html { render :new }
+        format.json { render json: { error: resource.errors.full_messages }, status: :unprocessable_entity }
       end
     end
   end
+
+  
     
 
   private

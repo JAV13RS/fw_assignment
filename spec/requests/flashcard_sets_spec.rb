@@ -58,6 +58,7 @@ RSpec.describe "FlashcardSets API", type: :request do
 
     context "when 20 flashcard sets are already created today" do
       before do
+        sign_in user
         20.times do
           create(:flashcard_set)
         end

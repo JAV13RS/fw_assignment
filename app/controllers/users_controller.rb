@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-    before_action :authenticate_user!, only: [:index, :show,:create_collection, :show_collection, :update_collection, :destroy_collection]
+    before_action :authenticate_user!, only: [:show,:create_collection, :show_collection, :update_collection, :destroy_collection]
     before_action :authorize_admin_status, only: [:update]
     before_action :set_user, only: [:update, :destroy, :collections, :create_collection, :show_collection, :update_collection, :destroy_collection]
   
@@ -12,6 +12,7 @@ class UsersController < ApplicationController
     end
   
     def show
+      Rails.logger.debug "Current User: #{current_user.inspect}"
       @user = User.find_by(id: params[:id])
   
       respond_to do |format|

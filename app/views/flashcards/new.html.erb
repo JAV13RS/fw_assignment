@@ -1,10 +1,8 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <!-- Page Title -->
       <h1 class="text-center mb-4">Create a New Flashcard</h1>
 
-      <!-- Error Messages -->
       <% if @flashcard.errors.any? %>
         <div class="alert alert-danger">
           <h4 class="alert-heading">Errors</h4>
@@ -16,27 +14,22 @@
         </div>
       <% end %>
 
-      <!-- Flashcard Creation Form -->
       <%= form_with(model: [@flashcard_set, @flashcard], local: true) do |form| %>
-        <!-- Question Field -->
         <div class="mb-3">
           <%= form.label :question, class: 'form-label' %>
           <%= form.text_area :question, rows: 3, class: 'form-control', placeholder: 'Enter the question here' %>
         </div>
 
-        <!-- Answer Field -->
         <div class="mb-3">
           <%= form.label :answer, class: 'form-label' %>
           <%= form.text_area :answer, rows: 3, class: 'form-control', placeholder: 'Enter the answer here' %>
         </div>
 
-        <!-- Submit Button -->
         <div class="text-center">
           <%= form.submit 'Create Flashcard', class: 'btn btn-primary' %>
         </div>
       <% end %>
 
-      <!-- Back Button -->
       <div class="text-center mt-3">
         <%= link_to 'Back to Flashcard Sets', flashcard_sets_path, class: 'btn btn-secondary' %>
       </div>

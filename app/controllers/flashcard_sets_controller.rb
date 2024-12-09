@@ -1,17 +1,17 @@
 class FlashcardSetsController < ApplicationController
-  before_action :set_collection, only: %i[create new index]
+  before_action :set_collection, only: %i[create new index edit update]
   before_action :set_flashcard_set, only: %i[show update destroy comment cards]
   
   def index
-    @collection = Collection.find(params[:collection_id]) if params[:collection_id] 
+    @collection = Collection.find(params[:collection_id]) if params[:collection_id]
     if @collection
-      @flashcard_sets = @collection.flashcard_sets 
+      @flashcard_sets = @collection.flashcard_sets
     else
-      @flashcard_sets = FlashcardSet.all 
+      @flashcard_sets = FlashcardSet.all
     end
     respond_to do |format|
       format.json { render json: @flashcard_sets, status: :ok }
-      format.html { render :index }  
+      format.html { render :index }
     end
   end
 
@@ -21,7 +21,7 @@ class FlashcardSetsController < ApplicationController
 
     respond_to do |format|
       format.json { render json: @flashcard_set, include: ['comments'], status: :ok }
-      format.html { render :show }  
+      format.html { render :show }
     end
   end
 
@@ -47,7 +47,6 @@ class FlashcardSetsController < ApplicationController
       end
     end
   end
-
 
   def edit
     @flashcard_set = FlashcardSet.find(params[:id])
@@ -76,10 +75,10 @@ class FlashcardSetsController < ApplicationController
   def comment
     @comment = @flashcard_set.comments.new(comment_params)
     @comment.user = current_user
-  
+
     respond_to do |format|
       if @comment.save
-        format.json { render json: @comment, status: :created }  
+        format.json { render json: @comment, status: :created }
         format.html { redirect_to @flashcard_set, notice: 'Comment added successfully.' }
       else
         format.json { render json: { error: 'Unable to create comment' }, status: :unprocessable_entity }
@@ -88,17 +87,16 @@ class FlashcardSetsController < ApplicationController
     end
   end
   
-  
   def cards
     @flashcards = @flashcard_set.flashcards
 
     if params[:shuffle].present? && ActiveModel::Type::Boolean.new.cast(params[:shuffle])
       @flashcards = @flashcards.shuffle
     end
-    
+
     respond_to do |format|
       format.json { render json: flashcards, status: :ok }
-      format.html { render :cards }  
+      format.html { render :cards }
     end
   end
 
@@ -120,9 +118,8 @@ class FlashcardSetsController < ApplicationController
   def comment_params
     params.require(:comment).permit(:comment)
   end
-  
 
   def flashcard_sets_today
-    FlashcardSet.where("created_at >= ?", Time.zone.today.beginning_of_day).count
+    FlashcardSet.where("user_id = ? AND created_at >= ?", current_user.id, Time.zone.today.beginning_of_day).count
   end
 end
