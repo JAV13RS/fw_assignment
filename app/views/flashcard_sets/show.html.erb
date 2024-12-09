@@ -16,7 +16,7 @@
                   <strong>Answer:</strong> <%= flashcard.answer %>
                 </p>
 
-                <% if @flashcard_set.user == current_user %>
+                <% if @flashcard_set.user == current_user || current_user.admin?%>
                   <div class="d-flex gap-2">
                     <%= link_to 'Edit', edit_flashcard_set_flashcard_path(@flashcard_set, flashcard), class: 'btn btn-warning btn-sm' %>
                     <%= button_to 'Delete', flashcard_set_flashcard_path(@flashcard_set, flashcard), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
@@ -30,17 +30,23 @@
       </div>
 
       <h2>Comments:</h2>
-      <% @flashcard_set.comments.each do |comment| %>
+      <% @flashcard_set.comments.reverse.each do |comment| %>
         <div class="card mb-2">
           <div class="card-body">
             <p><small><%= comment.user.email %></small></p>
             <p><%= comment.comment %></p>
             <p><small><%= comment.created_at %></small></p>
+
+            <% if @flashcard_set.user == current_user || current_user.admin?%>
+              <div class="d-flex gap-2">
+                <%= button_to 'Delete Comment', flashcard_set_comment_path(@flashcard_set, comment), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+              </div>
+            <%end%>
           </div>
         </div>
       <% end %>
 
-      <% if @flashcard_set.user != current_user %>
+      <% if @flashcard_set.user != current_user || current_user.admin? %>
         <%= form_with model: @comment, url: comment_flashcard_set_path(@flashcard_set), method: :post, remote: true do |form| %>
           <div class="form-group">
             <%= form.text_area :comment, placeholder: "Add a comment", class: "form-control", rows: 3 %>
@@ -50,7 +56,7 @@
       <% end %>
 
   
-      <% if @flashcard_set.user == current_user%>
+      <% if @flashcard_set.user == current_user || current_user.admin? %>
         <div class="fixed-buttons">
           <%= link_to 'Add Flashcard', new_flashcard_set_flashcard_path(@flashcard_set), class: 'btn btn-success' %>
           <%= link_to 'Test Yourself', cards_flashcard_set_path(@flashcard_set), class: 'btn btn-warning btn-lg' %>

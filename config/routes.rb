@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   resources :flashcard_sets, path: 'sets', except: [:new] do
     resources :flashcards
+    resources :comments, only: [:create, :edit, :update, :destroy]
+
     member do
       post :comment  
       get :cards     

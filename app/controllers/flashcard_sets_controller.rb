@@ -68,7 +68,7 @@ class FlashcardSetsController < ApplicationController
     @flashcard_set.destroy
     respond_to do |format|
       format.json { head :no_content }
-      format.html { redirect_to flashcard_sets_url, notice: 'Flashcard set deleted successfully.' }
+      format.html { redirect_back(fallback_location: flashcard_sets, notice: 'Flashcard set deleted successfully.') }
     end
   end
 

@@ -1,5 +1,5 @@
 class CollectionsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy, :new, :show]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :new, :show, :index]
   before_action :validate_headers, only: [:create, :update, :destroy, :index, :show, :random], if: -> { request.format.json? }
 
   def index
@@ -8,7 +8,6 @@ class CollectionsController < ApplicationController
     else
       @collections = Collection.includes(flashcard_sets: :comments).all
     end
-
 
     respond_to do |format|
       format.html
@@ -77,10 +76,6 @@ class CollectionsController < ApplicationController
     end
   end
   
-  
-  
-  
-  
   def edit
     @collection = Collection.find(params[:id])
   end
@@ -89,7 +84,7 @@ class CollectionsController < ApplicationController
     @collection = Collection.find(params[:id])
     if @collection.update(collection_params)
       respond_to do |format|
-        format.html { redirect_to collection_path(@collection), notice: 'Collection updated successfully.' }
+        format.html { redirect_to collection_path, notice: 'Collection updated successfully.' }
         format.json { render json: @collection, status: :ok }
       end
     else
@@ -104,7 +99,7 @@ class CollectionsController < ApplicationController
     @collection = Collection.find(params[:id])
     @collection.destroy
     respond_to do |format|
-      format.html { redirect_to collections_path, notice: 'Collection deleted successfully.' }
+      format.html { redirect_back(fallback_location: collections_path, notice: 'Collection deleted successfully.') }
       format.json { head :no_content }
     end
   end
@@ -126,13 +121,13 @@ class CollectionsController < ApplicationController
   end
 
   def all_collections
-    @collections = Collection.where.not(user: current_user)
+    @collections = Collection.where.not(user: current_user).where(public: true) 
+    @collections = Collection.all if current_user.admin == true
     respond_to do |format|
       format.html
       format.json { render json: @collections, status: :ok }
     end
   end
-
 
   private
 
@@ -147,6 +142,6 @@ class CollectionsController < ApplicationController
   end
 
   def collection_params
-    params.require(:collection).permit(:name, flashcard_sets: [:setID, :comment])
+    params.require(:collection).permit(:name, :public, flashcard_sets: [:setID, :comment])
   end
 end

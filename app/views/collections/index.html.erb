@@ -2,28 +2,36 @@
   <div class="row">
     <div class="col-md-12">
       <h1 class="text-center mb-4">Collections</h1>
-      
-      <div class="row">
-        <% @collections.reverse.each do |collection| %>
-          <div class="col-md-4 mb-4">
-            <div class="card h-100">
-              <div class="card-body">
-                <h5 class="card-title"><%= collection.name %></h5>
-                <p class="text-muted mb-2">
-                  <small><strong>Created on:</strong> <%= collection.created_at.strftime('%B %d, %Y') %></small>
-                </p>
-                <div>
-                  <div class="d-flex gap-2">
-                    <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
-                    <%= link_to 'Edit', edit_collection_path(collection), class: 'btn btn-warning btn-sm' %>
-                    <%= button_to 'Delete', collection_path(collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+
+      <% if @collections.empty? %>
+        <div class="alert alert-info text-center">
+          You have no collections.
+        </div>
+      <% else %>
+        <div class="row">
+          <% @collections.reverse.each do |collection| %>
+            <div class="col-md-4 mb-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h5 class="card-title"><%= collection.name %></h5>
+                  <p class="text-muted mb-2">
+                    <small><strong>Created on:</strong> <%= collection.created_at.strftime('%B %d, %Y') %></small>
+                    <br>
+                    <small><strong>Public: </strong><%= collection.public.to_s.capitalize %> </small>
+                  </p>
+                  <div>
+                    <div class="d-flex gap-2">
+                      <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
+                      <%= link_to 'Edit', edit_collection_path(collection), class: 'btn btn-warning btn-sm' %>
+                      <%= button_to 'Delete', collection_path(collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        <% end %>
-      </div>
+          <% end %>
+        </div>
+      <% end %>
 
       <div class="text-center mt-4 fixed-buttons">
         <%= link_to 'New Collection', new_collection_path, class: 'btn btn-success' %>
@@ -49,5 +57,11 @@
     display: inline-block;
     font-size: 16px;
     text-align: center;
+  }
+
+  .alert-info {
+    margin-top: 20px;
+    padding: 20px;
+    font-size: 1.2rem;
   }
 </style>

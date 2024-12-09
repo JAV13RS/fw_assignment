@@ -1,11 +1,16 @@
 <h1>Flashcards:</h1>
 
-<% @flashcard_set.flashcards.each do |flashcard| %>
-  <div class="flashcard">
-    <p><strong>Question:</strong> <%= flashcard.question %></p>
-    <p><strong>Answer:</strong> <%= flashcard.answer %></p>
+<% if @flashcard_set.flashcards.empty? %>
+  <div class="alert alert-info text-center">
+    There are no flashcards in this set.
   </div>
+<% else %>
+  <% @flashcard_set.flashcards.reverse.each do |flashcard| %>
+    <div class="flashcard">
+      <p><strong>Question:</strong> <%= flashcard.question %></p>
+      <p><strong>Answer:</strong> <%= flashcard.answer %></p>
+    </div>
+  <% end %>
 <% end %>
 
-
-<%= link_to 'Back to Flashcard Sets', collection_flashcard_sets_path(@collection) %>
+<%= link_to 'Back to Flashcard Sets', collection_flashcard_sets_path(@collection), class: 'btn btn-secondary' %>

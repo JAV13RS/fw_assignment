@@ -8,7 +8,12 @@
           <%= form.label :name, class: 'form-label' %>
           <%= form.text_field :name, value: @collection.name, class: 'form-control', placeholder: 'Enter collection name' %>
         </div>
-        
+
+        <div class="form-group">
+          <%= form.label :public, "Visibility" %>
+          <%= form.select :public, options_for_select([['Private', false], ['Public', true]], @collection.public?) %>
+        </div>
+
         <div class="text-center">
           <%= form.submit "Create Collection", class: 'btn btn-primary' %>
           <%= link_to 'Cancel', collections_path, class: 'btn btn-secondary ms-2' %>
