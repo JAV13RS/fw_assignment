@@ -2,17 +2,53 @@
   <div class="row">
     <div class="col-md-12">
       <h1 class="text-center mb-4">Collections</h1>
-      <ul class="list-group">
-        <% @collections.each do |collection| %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span><%= collection.name %></span>
-            <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
-          </li>
+      
+      <div class="row">
+        <% @collections.reverse.each do |collection| %>
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title"><%= collection.name %></h5>
+                <p class="text-muted mb-2">
+                  <small><strong>Created on:</strong> <%= collection.created_at.strftime('%B %d, %Y') %></small>
+                </p>
+                <div>
+                  <div class="d-flex gap-2">
+                    <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
+                    <%= link_to 'Edit', edit_collection_path(collection), class: 'btn btn-warning btn-sm' %>
+                    <%= button_to 'Delete', collection_path(collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         <% end %>
-      </ul>
-      <div class="text-center mt-4">
+      </div>
+
+      <div class="text-center mt-4 fixed-buttons">
         <%= link_to 'New Collection', new_collection_path, class: 'btn btn-success' %>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .fixed-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000; 
+    padding-bottom: 10px;
+  }
+
+  .fixed-buttons a, .fixed-buttons button {
+    display: inline-block;
+    font-size: 16px;
+    text-align: center;
+  }
+</style>

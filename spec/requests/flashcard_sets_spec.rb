@@ -7,6 +7,9 @@ RSpec.describe "FlashcardSets API", type: :request do
   let(:flashcard_set_id) { flashcard_set.id }
   let(:valid_attributes) { { name: 'Updated Name' }.to_json }
   
+  before do
+    sign_in user 
+  end
   
 
   # Test index action
@@ -23,9 +26,7 @@ RSpec.describe "FlashcardSets API", type: :request do
 
   # Test create action
   describe 'POST /sets' do
-    before do
-      sign_in user 
-    end
+
     let(:valid_attributes) { { name: 'New Set'}.to_json }
   
     it 'creates a flashcard set' do

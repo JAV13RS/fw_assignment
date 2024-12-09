@@ -4,29 +4,73 @@
       <h1 class="text-center mb-4"><%= @collection.name %></h1>
 
       <ul class="list-group">
-        <% @collection.flashcard_sets.each do |set| %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span><%= set.name %></span>
-            <%= link_to 'Open Flashcard Set', flashcard_set_path(set), class: 'btn btn-primary btn-sm' %>
-          </li>
+        <div class="row">
+        <% @collection.flashcard_sets.reverse.each do |flashcard_set| %>
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              <div class="card-body">
+                <h5 class="card-title">
+                  <%= flashcard_set.name %>
+                </h5>
+
+                <p class="text-muted mb-2">
+                  <small><strong>Created on:</strong> <%= flashcard_set.created_at.strftime('%B %d, %Y') %></small>
+                </p>
+                
+                <% if @collection.user == current_user%>
+                  <div class="d-flex gap-2">
+                    <%= link_to 'Open Flashcard Set', flashcard_set_path(flashcard_set), class: 'btn btn-primary btn-sm' %>
+                    <%= link_to 'Edit', edit_flashcard_set_path(flashcard_set), class: 'btn btn-warning btn-sm' %>
+                    <%= button_to 'Delete', flashcard_set_path(flashcard_set), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                  </div>
+                <%else%>
+                  <div class="d-flex gap-2">
+                    <%= link_to 'Open Flashcard Set', flashcard_set_path(flashcard_set), class: 'btn btn-primary btn-sm' %>
+                  </div>
+                <%end%>
+                
+              </div>
+            </div>
+          </div>
         <% end %>
       </ul>
 
       <% if @collection.user == current_user %>
-        <div class="text-center mt-4">
-          <%= link_to 'Add Flashcard Set', new_collection_flashcard_set_path(@collection), class: 'btn btn-success' %>
-          <%= link_to 'Edit', edit_collection_path(@collection), class: 'btn btn-warning' %>
-          <%= link_to 'Back', collections_path, class: 'btn btn-secondary' %>
-          <%= button_to 'Delete Collection', collection_path(@collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+        <div class="text-center mt-4 fixed-buttons">
+          <div class="d-flex justify-content-center gap-2">
+            <%= link_to 'Add Flashcard Set', new_collection_flashcard_set_path(@collection), class: 'btn btn-success' %>
+            <%= link_to 'Edit', edit_collection_path(@collection), class: 'btn btn-warning' %>
+            <%= link_to 'Back', collections_path, class: 'btn btn-secondary' %>
+            <%= button_to 'Delete Collection', collection_path(@collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+          </div>
         </div>
-
       <% else %>
-        <div class="text-center mt-3">
+        <div class="text-center mt-3 fixed-buttons">
           <%= link_to 'Back to All Collections', all_collections_path, class: 'btn btn-secondary' %>
         </div>
       <% end %>
-
-      
     </div>
   </div>
 </div>
+
+
+<style>
+  .fixed-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000; 
+    padding-bottom: 10px;
+  }
+
+  .fixed-buttons a, .fixed-buttons button {
+    display: inline-block;
+    font-size: 16px;
+    text-align: center;
+  }
+</style>
