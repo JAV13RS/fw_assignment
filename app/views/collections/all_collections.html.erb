@@ -23,18 +23,26 @@
             <div class="card-body">
               <h5 class="card-title"><%= collection.name %></h5>
               <p class="card-text"><strong>Created by:</strong> <%= collection.user.email %></p>
-
-              <div class="d-flex gap-2">
+              <% if current_user.admin?%>
+                <div class="d-flex gap-2">
+                  <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
+                  <%= link_to 'Edit', edit_collection_path(collection), class: 'btn btn-warning btn-sm' %>
+                  <%= button_to 'Delete', collection_path(collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                  <% if current_user.favorite_collections.include?(collection) %>
+                    <%= button_to 'Unfavorite', collection_favorite_path(collection, current_user.favorites.find_by(collection: collection)), method: :delete, class: 'btn btn-warning btn-sm' %>
+                  <% else %>
+                    <%= button_to 'Favorite', collection_favorites_path(collection), method: :post, class: 'btn btn-success btn-sm' %>
+                  <% end %>
+                </div>
+              <%else%>
                 <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
-
                 <% if current_user.favorite_collections.include?(collection) %>
-  <%= button_to 'Unfavorite', collection_favorite_path(collection, current_user.favorites.find_by(collection: collection)), method: :delete, class: 'btn btn-warning btn-sm' %>
-<% else %>
-  <%= button_to 'Favorite', collection_favorites_path(collection), method: :post, class: 'btn btn-success btn-sm' %>
-<% end %>
-
-
-              </div>
+                  <%= button_to 'Unfavorite', collection_favorite_path(collection, current_user.favorites.find_by(collection: collection)), method: :delete, class: 'btn btn-warning btn-sm' %>
+                <% else %>
+                  <%= button_to 'Favorite', collection_favorites_path(collection), method: :post, class: 'btn btn-success btn-sm' %>
+                <% end %>
+              <%end%>
+              
             </div>
           </div>
         </div>
