@@ -16,6 +16,7 @@ RSpec.describe "Collections API", type: :request do
 
   describe "GET /collections" do
     context "when format is JSON" do
+
       it "returns all collections with flashcard sets and comments" do
         get collections_path, as: :json
 

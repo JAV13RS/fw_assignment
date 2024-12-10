@@ -1,5 +1,5 @@
 class CollectionsController < ApplicationController
-  before_action :authenticate_user!, only: [:create, :update, :destroy, :new, :show, :index]
+  before_action :authenticate_user!, only: [:create, :update, :destroy, :new, :show, :edit]
   before_action :validate_headers, only: [:create, :update, :destroy, :index, :show, :random], if: -> { request.format.json? }
 
   def index
@@ -121,13 +121,25 @@ class CollectionsController < ApplicationController
   end
 
   def all_collections
-    @collections = Collection.where.not(user: current_user).where(public: true) 
-    @collections = Collection.all if current_user.admin == true
+    @collections = if current_user.admin?
+                     Collection.all
+                   else
+                     Collection.joins(:user)
+                               .where.not(user: current_user)
+                               .where(public: true)
+                               .where(
+                                 "collections.name LIKE :query OR users.email LIKE :query",
+                                 query: "%#{params[:query]}%"
+                               )
+                   end
+  
     respond_to do |format|
       format.html
       format.json { render json: @collections, status: :ok }
     end
   end
+  
+  
 
   private
 

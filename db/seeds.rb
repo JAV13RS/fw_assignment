@@ -33,7 +33,8 @@ collections = []
 NUM_COLLECTIONS.times do
   collections << Collection.create!(
     name: Faker::Book.genre,
-    user: users.sample
+    user: users.sample,
+    public: [true, false].sample # Randomly assign public or private
   )
 end
 puts "Created #{collections.count} collections."
