@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :collections do
     get 'random', on: :collection
     resources :flashcard_sets 
+    resources :favorites, only: [:create, :destroy]
   end
 
   resources :flashcard_sets, path: 'sets', except: [:new] do
@@ -28,6 +29,7 @@ Rails.application.routes.draw do
     resources :collections
   end
   
+  get '/favorites', to: 'collections#favorites', as: 'favorites'
   get '/collection/all_collections', to: 'collections#all_collections', as: 'all_collections'
   get '/users/:user_id/sets', to: 'users#flashcard_sets'
   root 'collections#index'

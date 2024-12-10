@@ -1,7 +1,7 @@
 <div class="container mt-5">
   <h1 class="text-center mb-4">Other Users' Collections</h1>
 
-  <div class="col-md-12">
+  <div class="col-md-12 pb-5">
     <%= form_with url: all_collections_path, method: :get, class: "d-flex", local: true do |form| %>
       <%= form.text_field :query, value: params[:query], placeholder: "Search collections or creators...", class: "form-control me-2" %>
       <%= form.submit "Search", class: "btn btn-primary" %>
@@ -23,19 +23,23 @@
             <div class="card-body">
               <h5 class="card-title"><%= collection.name %></h5>
               <p class="card-text"><strong>Created by:</strong> <%= collection.user.email %></p>
-              <% if current_user.admin? %>
-                <div class="d-flex gap-2">
-                  <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
-                  <%= link_to 'Edit', edit_collection_path(collection), class: 'btn btn-warning btn-sm' %>
-                  <%= button_to 'Delete', collection_path(collection), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
-                </div>
-              <% else %>
+
+              <div class="d-flex gap-2">
                 <%= link_to 'Open Collection', collection_path(collection), class: 'btn btn-primary btn-sm' %>
-              <% end %>
+
+                <% if current_user.favorite_collections.include?(collection) %>
+  <%= button_to 'Unfavorite', collection_favorite_path(collection, current_user.favorites.find_by(collection: collection)), method: :delete, class: 'btn btn-warning btn-sm' %>
+<% else %>
+  <%= button_to 'Favorite', collection_favorites_path(collection), method: :post, class: 'btn btn-success btn-sm' %>
+<% end %>
+
+
+              </div>
             </div>
           </div>
         </div>
       <% end %>
+
     </div>
   <% else %>
     <p class="text-center">There are no collections from other users available.</p>

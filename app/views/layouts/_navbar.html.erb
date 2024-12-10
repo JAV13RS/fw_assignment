@@ -13,13 +13,16 @@
             <span class="navbar-text d-flex align-items-center text-white">Welcome, <%= current_user.email %></span>
           </li>
           <li class="nav-item">
-            <%= link_to "My Collections", collections_path, class: "nav-link text-white" %>
+            <%= link_to "My Collections", collections_path, class: "btn btn-secondary" %>
           </li>
           <li class="nav-item">
-            <%= link_to "Flashcard Sets", flashcard_sets_path, class: "nav-link text-white" %>
+            <%= link_to "Flashcard Sets", flashcard_sets_path, class: "btn btn-secondary" %>
           </li>
           <li class="nav-item">
-            <%= link_to "All Collections", all_collections_path, class: "nav-link text-white" %>
+            <%= link_to "All Collections", all_collections_path, class: "btn btn-secondary" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Favourites', favorites_path, class: 'btn btn-secondary' %>
           </li>
         <% end %>
       </ul>
@@ -27,15 +30,15 @@
       <ul class="navbar-nav ms-auto">
         <% if user_signed_in? %>
           <li class="nav-item">
-            <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "nav-link text-white", data: { turbo_method: :delete } %>
+            <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "btn btn-secondary", data: { turbo_method: :delete } %>
 
           </li>
         <% else %>
           <li class="nav-item">
-            <%= link_to "Sign In", new_user_session_path, class: "nav-link text-white" %>
+            <%= link_to "Sign In", new_user_session_path, class: "btn btn-secondary" %>
           </li>
           <li class="nav-item">
-            <%= link_to "Sign Up", new_user_registration_path, class: "nav-link text-white" %>
+            <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-secondary" %>
           </li>
         <% end %>
       </ul>

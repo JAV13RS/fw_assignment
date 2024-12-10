@@ -139,6 +139,14 @@ class CollectionsController < ApplicationController
     end
   end
   
+  def favorites
+    @favorite_collections = current_user.favorite_collections
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @favorite_collections, status: :ok }
+    end
+  end
   
 
   private
