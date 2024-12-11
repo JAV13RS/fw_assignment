@@ -28,7 +28,7 @@ class UsersController < ApplicationController
   
     def create
       @user = User.new(user_params)
-  
+    
       respond_to do |format|
         if @user.save
           format.json { render json: @user, status: :created }
@@ -39,6 +39,7 @@ class UsersController < ApplicationController
         end
       end
     end
+    
   
     def update
       respond_to do |format|

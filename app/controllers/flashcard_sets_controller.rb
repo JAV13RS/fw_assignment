@@ -1,7 +1,7 @@
 class FlashcardSetsController < ApplicationController
   before_action :set_collection, only: %i[create new index edit update]
   before_action :set_flashcard_set, only: %i[show update destroy comment cards]
-  
+
   def index
     @collection = Collection.find(params[:collection_id]) if params[:collection_id]
     if @collection
@@ -35,9 +35,9 @@ class FlashcardSetsController < ApplicationController
     @flashcard_set.collection_id = @collection.id if @collection
 
     respond_to do |format|
-      if flashcard_sets_today >= 20
-        format.json { render json: { message: "You have reached the maximum number of flashcard sets allowed today" }, status: :too_many_requests }
-        format.html { redirect_to flashcard_sets_path, alert: "You have reached the maximum number of flashcard sets allowed today." }
+      if flashcard_sets_today >= daily_limit
+        format.json { render json: { message: "You have reached the daily limit of #{daily_limit} flashcard sets." }, status: :too_many_requests }
+        format.html { redirect_to flashcard_sets_path, alert: "You have reached the daily limit of #{daily_limit} flashcard sets." }
       elsif @flashcard_set.save
         format.json { render json: @flashcard_set, status: :created }
         format.html { redirect_to @flashcard_set, notice: 'Flashcard set created successfully.' }
@@ -68,7 +68,7 @@ class FlashcardSetsController < ApplicationController
     @flashcard_set.destroy
     respond_to do |format|
       format.json { head :no_content }
-      format.html { redirect_back(fallback_location: flashcard_sets, notice: 'Flashcard set deleted successfully.') }
+      format.html { redirect_back(fallback_location: flashcard_sets_path, notice: 'Flashcard set deleted successfully.') }
     end
   end
 
@@ -86,17 +86,17 @@ class FlashcardSetsController < ApplicationController
       end
     end
   end
-  
+
   def cards
     @flashcards = @flashcard_set.flashcards
-  
+
     @flashcards = @flashcards.left_joins(:hidden_flashcards)
                              .where.not(hidden_flashcards: { user_id: current_user.id, hidden: true })
-  
+
     if params[:shuffle].present? && ActiveModel::Type::Boolean.new.cast(params[:shuffle])
       @flashcards = @flashcards.shuffle
     end
-  
+
     respond_to do |format|
       format.json { render json: @flashcards, status: :ok }
       format.html { render :cards }
@@ -124,5 +124,10 @@ class FlashcardSetsController < ApplicationController
 
   def flashcard_sets_today
     FlashcardSet.where("user_id = ? AND created_at >= ?", current_user.id, Time.zone.today.beginning_of_day).count
+  end
+
+  def daily_limit
+    setting = Setting.first || Setting.create(daily_set_limit: 30)
+    setting.daily_set_limit
   end
 end

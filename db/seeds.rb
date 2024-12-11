@@ -6,6 +6,7 @@ Collection.destroy_all
 FlashcardSet.destroy_all
 Flashcard.destroy_all
 Comment.destroy_all
+Setting.destroy_all
 
 # Constants
 NUM_USERS = 20
@@ -27,6 +28,10 @@ users << admin
   )
 end
 puts "Created #{users.count} users."
+
+# Seed the Settings after admin user exists
+Setting.create(daily_set_limit: 20) if Setting.count.zero?
+puts "Created default settings."
 
 # Seed collections
 collections = []

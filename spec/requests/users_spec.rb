@@ -29,36 +29,30 @@ RSpec.describe "Users API", type: :request do
 
   before { sign_in user }
 
-  # Test creating a user with valid attributes
-  describe "POST /users" do
-    context "when the request is valid" do
-      it "creates a new user" do
-        post "/users", 
-             params: valid_attributes.to_json, 
-             headers: headers
+  describe 'POST /users' do
+    context 'when the request is valid' do
+      let(:valid_params) { { user: { email: 'newuser@example.com', password: 'password', password_confirmation: 'password' } } }
 
+      it 'creates a new user and returns status 201' do
+        post '/users', params: valid_params, as: :json
         expect(response).to have_http_status(:created)
-
         json_response = JSON.parse(response.body)
-        expect(json_response['email']).to eq(valid_attributes[:user][:email])
+        expect(json_response['email']).to eq('newuser@example.com')
       end
     end
 
-    context "when the request is invalid" do
-      it "returns an unprocessable entity status" do
-        post "/users", 
-             params: invalid_attributes.to_json, 
-             headers: headers
+    context 'when the request is invalid' do
+      let(:invalid_params) { { user: { email: '', password: 'password' } } }
 
-        expect(response).to have_http_status(:unprocessable_entity)
-
-        json_response = JSON.parse(response.body)
-        expect(json_response['error']).to include("Password confirmation doesn't match Password")
+      it 'returns an error and status 422' do
+        post '/users', params: invalid_params, as: :json
+        expect(response).to have_http_status(:unprocessable_entity) # 422
+        expect(json_response['error']).to include("Email can't be blank")
       end
     end
   end
 
-  # Test getting specific user information
+
   describe 'GET /users/:id' do
     context 'when the user exists' do
       it 'retrieves the user by id' do
@@ -84,7 +78,6 @@ RSpec.describe "Users API", type: :request do
     end
   end
 
-  # Test updating a user
   describe 'PUT /users/:id' do
     context 'when the user is an admin' do
 

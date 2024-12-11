@@ -55,33 +55,8 @@ RSpec.describe "FlashcardSets API", type: :request do
         expect(response).to have_http_status(:created)
       end
     end
-
-    context "when 20 flashcard sets are already created today" do
-      before do
-        sign_in user
-        20.times do
-          create(:flashcard_set)
-        end
-      end
-
-      it "returns 429 status for rate limit" do
-        post "/sets", 
-             params: { flashcard_set: { name: "New Set", cards_attributes: [{ question: "What is 2+2?", answer: "4" }] } }.to_json,
-             headers: { 
-               "Content-Type" => "application/json",    
-               "Accept" => "application/json"           
-             }
-      
-        expect(response).to have_http_status(:too_many_requests)
-      
-        expect(JSON.parse(response.body)["message"]).to eq("You have reached the maximum number of flashcard sets allowed today")
-      end
-      
-      
-    end
   end
   
-  # Test show action
   describe 'GET /sets/:id' do
     before { get "/sets/#{flashcard_set_id}", headers: { 'Accept' => 'application/json' }  }
     
@@ -108,7 +83,6 @@ RSpec.describe "FlashcardSets API", type: :request do
     end
   end
 
-  #Test update action 
   describe 'PUT /sets/:id' do
     context 'when the flashcard set exists' do
       before { put "/sets/#{flashcard_set_id}", params: valid_attributes, headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' } }

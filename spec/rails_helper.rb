@@ -71,4 +71,14 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::IntegrationHelpers, type: :request
+
+  module RequestSpecHelper
+    def json_response
+      JSON.parse(response.body)
+    end
+  end
+  
+  RSpec.configure do |config|
+    config.include RequestSpecHelper, type: :request
+  end
 end

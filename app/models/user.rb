@@ -1,4 +1,9 @@
 class User < ApplicationRecord
+  
+  def admin?
+    self.admin
+  end
+
   has_many :flashcard_sets, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :collections, dependent: :destroy

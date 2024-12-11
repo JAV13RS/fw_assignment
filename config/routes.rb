@@ -2,6 +2,10 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'users/registrations' }
 
 
+  namespace :admin do
+    resources :settings, only: [:edit, :update]
+  end
+  
   resources :collections do
     get 'random', on: :collection
     resources :flashcard_sets 
