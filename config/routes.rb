@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
 
   namespace :admin do
-    resources :settings, only: [:edit, :update]
+    resource :settings, only: [:edit, :update]
   end
   
   resources :collections do
