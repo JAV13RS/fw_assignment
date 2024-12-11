@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_12_10_004125) do
+ActiveRecord::Schema[8.0].define(version: 2024_12_11_002831) do
   create_table "collections", force: :cascade do |t|
     t.string "name"
     t.integer "user_id", null: false
@@ -65,6 +65,16 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_10_004125) do
     t.index ["flashcard_set_id"], name: "index_flashcards_on_flashcard_set_id"
   end
 
+  create_table "hidden_flashcards", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "flashcard_id", null: false
+    t.boolean "hidden"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["flashcard_id"], name: "index_hidden_flashcards_on_flashcard_id"
+    t.index ["user_id"], name: "index_hidden_flashcards_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -85,4 +95,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_12_10_004125) do
   add_foreign_key "favorites", "users"
   add_foreign_key "flashcard_sets", "collections"
   add_foreign_key "flashcards", "flashcard_sets"
+  add_foreign_key "hidden_flashcards", "flashcards"
+  add_foreign_key "hidden_flashcards", "users"
 end

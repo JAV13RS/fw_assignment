@@ -16,18 +16,26 @@
                   <strong>Answer:</strong> <%= flashcard.answer %>
                 </p>
 
-                <% if @flashcard_set.user == current_user || current_user.admin?%>
+                <% if @flashcard_set.user == current_user || current_user.admin? %>
                   <div class="d-flex gap-2">
                     <%= link_to 'Edit', edit_flashcard_set_flashcard_path(@flashcard_set, flashcard), class: 'btn btn-warning btn-sm' %>
                     <%= button_to 'Delete', flashcard_set_flashcard_path(@flashcard_set, flashcard), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
                   </div>
-                <%end%>
-                
+                <% end %>
+
+                  <div class="mt-3">
+                    <% if flashcard.hidden_flashcards.exists?(user_id: current_user.id, hidden: true) %>
+                      <%= button_to 'Unhide', unhide_flashcard_set_flashcard_path(@flashcard_set, flashcard), method: :post, class: 'btn btn-warning btn-sm' %>
+                    <% else %>
+                      <%= button_to 'Hide', hide_flashcard_set_flashcard_path(@flashcard_set, flashcard), method: :post, class: 'btn btn-secondary btn-sm' %>
+                    <% end %>
+                  </div>
               </div>
             </div>
           </div>
         <% end %>
       </div>
+
 
       <h2>Comments:</h2>
       <% @flashcard_set.comments.reverse.each do |comment| %>

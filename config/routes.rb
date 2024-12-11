@@ -9,7 +9,11 @@ Rails.application.routes.draw do
   end
 
   resources :flashcard_sets, path: 'sets', except: [:new] do
-    resources :flashcards
+    resources :flashcards do
+      post 'hide', on: :member
+      post 'unhide', on: :member
+    end
+    
     resources :comments, only: [:create, :edit, :update, :destroy]
 
     member do

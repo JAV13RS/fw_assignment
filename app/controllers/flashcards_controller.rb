@@ -64,6 +64,30 @@ class FlashcardsController < ApplicationController
         end
     end
 
+
+    def hide
+        flashcard = Flashcard.find(params[:id])
+    
+        current_user.hidden_flashcards.find_or_create_by(flashcard: flashcard, hidden: true)
+
+        respond_to do |format|
+          format.html { redirect_back fallback_location: flashcard_set_path(flashcard.flashcard_set), notice: 'Flashcard hidden.' }
+          format.json { render json: { message: 'Flashcard hidden.' }, status: :ok }
+        end
+    
+    end
+
+    def unhide
+        flashcard = Flashcard.find(params[:id])
+
+        hidden_flashcard = current_user.hidden_flashcards.find_by(flashcard: flashcard)
+        hidden_flashcard&.destroy
+
+        respond_to do |format|
+            format.html { redirect_back fallback_location: flashcard_set_path(flashcard.flashcard_set), notice: 'Flashcard unhidden.' }
+            format.json { render json: { message: 'Flashcard unhidden.' }, status: :ok }
+        end
+    end
     private 
 
     def flashcard_params

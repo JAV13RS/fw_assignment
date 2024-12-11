@@ -89,13 +89,16 @@ class FlashcardSetsController < ApplicationController
   
   def cards
     @flashcards = @flashcard_set.flashcards
-
+  
+    @flashcards = @flashcards.left_joins(:hidden_flashcards)
+                             .where.not(hidden_flashcards: { user_id: current_user.id, hidden: true })
+  
     if params[:shuffle].present? && ActiveModel::Type::Boolean.new.cast(params[:shuffle])
       @flashcards = @flashcards.shuffle
     end
-
+  
     respond_to do |format|
-      format.json { render json: flashcards, status: :ok }
+      format.json { render json: @flashcards, status: :ok }
       format.html { render :cards }
     end
   end
