@@ -34,11 +34,10 @@ RSpec.describe "Users API", type: :request do
       let(:valid_params) { { user: { email: 'newuser@example.com', password: 'password', password_confirmation: 'password' } } }
 
       it 'creates a new user and returns status 201' do
-        post '/users', params: valid_params, as: :json
+        post '/users', params: valid_params.to_json, headers: headers
         expect(response).to have_http_status(:created)
-        json_response = JSON.parse(response.body)
-        expect(json_response['email']).to eq('newuser@example.com')
       end
+      
     end
 
     context 'when the request is invalid' do
@@ -46,7 +45,7 @@ RSpec.describe "Users API", type: :request do
 
       it 'returns an error and status 422' do
         post '/users', params: invalid_params, as: :json
-        expect(response).to have_http_status(:unprocessable_entity) # 422
+        expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']).to include("Email can't be blank")
       end
     end

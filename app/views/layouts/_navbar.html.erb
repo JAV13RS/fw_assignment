@@ -27,7 +27,7 @@
 
       <ul class="navbar-nav ms-auto">
 
-        <% if current_user.admin? %>
+        <% if user_signed_in? && current_user.admin? %>
           <li class="nav-item">
             <%= link_to "Settings", edit_admin_settings_path, class: "btn btn-secondary" %>
           </li>

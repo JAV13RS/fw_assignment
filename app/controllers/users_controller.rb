@@ -31,14 +31,15 @@ class UsersController < ApplicationController
     
       respond_to do |format|
         if @user.save
-          format.json { render json: @user, status: :created }
+          format.json { render json: @user, status: :created } 
           format.html { redirect_to @user, notice: 'User was successfully created.' }
         else
-          format.json { render json: { error: @user.errors.full_messages }, status: :bad_request }
+          format.json { render json: { error: @user.errors.full_messages }, status: :unprocessable_entity }
           format.html { render :new }
         end
       end
     end
+    
     
   
     def update
